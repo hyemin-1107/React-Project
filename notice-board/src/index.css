@@ -1,8 +1,32 @@
-body {
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@100;200;300;400;500;600;700&display=swap");
+/* @import url('https://fonts.googleapis.com/css2?family=Hahmlet:wght@100..900&display=swap'); */
+
+html, body, h1, h2, h3, h4, h5, h6, div, span, p, blockquote, pre, code, address, ul, ol, li, nav, section, article, header, footer, main, aside, dl, dt, dd, table, thead, tbody, tfoot, label, caption, th, td, form, fieldset, legend, hr, input, button, textarea, object, figure, figcaption {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  padding: 0;
+  font-family: "IBM Plex Sans KR", serif;
+  /* font-family: "Hahmlet", serif; */
+  color: #444;
+}
+
+body, input, select, textarea, button, img, fieldset {
+  border: none;
+}
+
+em, i, a, button{
+  font-style: normal;
+  text-decoration: none;
+  color: #444;
+}
+
+ul, ol, li {
+  list-style: none;
+}
+
+body {
+  /* background-color: #3a809b; */
+  background-color: #bed9e3;
+  margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -10,4 +34,8 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+ci{
+  color: #ffc94a;
 }
