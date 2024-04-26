@@ -4,25 +4,38 @@ import ico_close from "../../../images/ico_close.png";
 import ico_important from "../../../images/ico_important.png";
 
 const SignUpModal = (props) => {
-  const { isSignUpModal, onClickCloseButton } = props;
+  // 유저네임, 생년월일, 비번, 비번확인 상태값
+  const [userData, setUserData] = useState({
+    username: "",
+    birthDate: "",
+    password: "",
+    confirmPassword: "",
+  });
 
-  // 유저네임, 비번, 비번확인 상태값
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const { isSignUpModal, onClickCloseButton, setIsSignUpModal } = props;
 
   // input창에 입력할때 해당 값 변화를 감지하고 업데이트
   const onChangeUsernameHandler = (e) => {
-    const usernameValue = e.target.value;
-    setUsername(usernameValue);
+    setUserData({
+      ...userData,
+      [e.target.name]: e.target.value,
+    });
   };
 
-  const onChangePasswordHandler = (e) => {
-    const { name, value } = e.target;
-    if (name === "password") {
-      setPassword(value);
+  const { username, birthDate, password, confirmPassword } = userData;
+
+  // 비밀번호 일치 체크
+  const passwordCheck = password === confirmPassword;
+
+  // 모든 값 입력 완료 체크
+  const inputCompleteButton = () => {
+    if (username !== "" && birthDate !== "" && passwordCheck === true) {
+      alert("가입이 완료되었습니다.");
+      setIsSignUpModal(false);
+    } else if (username !== "" && birthDate !== "" && passwordCheck === false) {
+      alert("비밀번호가 일치 하지않습니다.");
     } else {
-      setConfirmPassword(value);
+      alert("작성을 완료해주세요");
     }
   };
 
@@ -36,22 +49,64 @@ const SignUpModal = (props) => {
       />
       <SignUpInputWrap>
         <div>
-          <label name="id">
+          <label htmlFor="username">
             사용할 이름을 입력해주세요 <span>*</span>
           </label>
-          <input name="id" placeholder="Username"></input>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Username"
+            value={username}
+            onChange={(e) =>
+              setUserData({ ...userData, username: e.target.value })
+            }
+          ></input>
         </div>
         <div>
-          <label name="pw">
+          <label htmlFor="birthDate">
+            생년월일을 입력해주세요(6자리) <span>*</span>
+          </label>
+          <input
+            type="number"
+            id="birthDate"
+            name="birthDate"
+            placeholder="Birth Date"
+            value={birthDate}
+            onChange={(e) =>
+              setUserData({ ...userData, birthDate: e.target.value })
+            }
+          ></input>
+        </div>
+        <div>
+          <label htmlFor="password">
             비밀번호를 입력해주세요 <span>*</span>
           </label>
-          <input type="password" name="pw" placeholder="Password"></input>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) =>
+              setUserData({ ...userData, password: e.target.value })
+            }
+          ></input>
         </div>
         <div>
-          <label name="pw">
+          <label htmlFor="confirmPassword">
             한번 더 입력해주세요 <span>*</span>
           </label>
-          <input type="password" name="pw" placeholder="Password"></input>
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            placeholder="Password"
+            value={confirmPassword}
+            onChange={(e) =>
+              setUserData({ ...userData, confirmPassword: e.target.value })
+            }
+          ></input>
         </div>
       </SignUpInputWrap>
       <Agreement>
@@ -61,31 +116,13 @@ const SignUpModal = (props) => {
         </label>
       </Agreement>
       <SignUpButtoncontents>
-        <button>가입 완료</button>
+        <button onClick={inputCompleteButton}>가입 완료</button>
       </SignUpButtoncontents>
     </SignUpModalWrap>
   );
 };
 
 export default SignUpModal;
-
-const Agreement = styled.span`
-  display: flex;
-
-  gap: 10px;
-  margin: 0 100px;
-
-  input {
-    /* display: none; */
-    &:checked + label {
-      font-style: italic;
-    }
-    cursor: pointer;
-  }
-  label {
-    cursor: pointer;
-  }
-`;
 
 const SignUpModalWrap = styled.div`
   display: ${(props) => (props.isSignUpModal ? "block" : "none")};
@@ -127,7 +164,7 @@ const ModalCloseButton = styled.img`
 
   margin: 33px;
 
-  width: 24px;
+  width: 22px;
 
   transition: 0.3s;
   cursor: pointer;
@@ -150,8 +187,8 @@ const SignUpInputWrap = styled.article`
   display: flex;
   flex-direction: column;
 
-  gap: 30px;
-  margin: 110px 100px 10px;
+  gap: 16px;
+  margin: 80px 100px 10px;
   /* label{
     position: relative;
     &:after{
@@ -187,12 +224,30 @@ const SignUpInputWrap = styled.article`
   }
 `;
 
+const Agreement = styled.span`
+  display: flex;
+
+  gap: 10px;
+  margin: 0 100px;
+
+  input {
+    /* display: none; */
+    &:checked + label {
+      font-style: italic;
+    }
+    cursor: pointer;
+  }
+  label {
+    cursor: pointer;
+  }
+`;
+
 const SignUpButtoncontents = styled.section`
   display: flex;
   justify-content: center;
 
   gap: 20px;
-  margin: 50px 100px;
+  margin: 36px 100px 0;
 
   button {
     padding: 10px;

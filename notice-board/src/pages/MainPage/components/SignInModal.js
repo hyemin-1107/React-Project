@@ -5,12 +5,12 @@ import styled from "styled-components";
 import ico_close from "../../../images/ico_close.png";
 
 const SignInModal = (props) => {
-  const { isSignInModal, onClickCloseButton } = props;
-  const navigate = useNavigate();
   const [userLogin, setUserLogin] = useState({
     id: "",
     pw: "",
   });
+  const { isSignInModal, onClickCloseButton, openSignUpModal } = props;
+  const navigate = useNavigate();
   const onChange = (e) => {
     const { value, name } = e.target;
     setUserLogin({
@@ -23,7 +23,7 @@ const SignInModal = (props) => {
     let loginPw = "";
     if (userLogin.id === loginId && userLogin.pw === loginPw) {
       // alert("로그인 성공!");
-      navigate("/notice_board");
+      navigate("/notice-board");
     } else {
       alert("아이디 혹은 비밀번호를 확인해주세요!");
     }
@@ -56,7 +56,9 @@ const SignInModal = (props) => {
         </LoginSignInButton>
         <LoginSignUp>
           <LoginSignUpText>회원이 아니신가요?</LoginSignUpText>
-          <LoginSignUpButton>가입하기</LoginSignUpButton>
+          <LoginSignUpButton onClick={openSignUpModal}>
+            가입하기
+          </LoginSignUpButton>
         </LoginSignUp>
       </LoginWrap>
     </SignInModalWrap>
@@ -104,7 +106,7 @@ const ModalCloseButton = styled.img`
 
   margin: 33px;
 
-  width: 24px;
+  width: 22px;
 
   cursor: pointer;
 
@@ -165,7 +167,7 @@ const LoginSignInButton = styled.button`
   font-weight: 500;
   font-size: 18px;
 
-  border-radius: 6px;
+  border-radius: 4px;
   box-shadow:
     rgba(0, 0, 0, 0.1) 0px 1px 3px,
     rgba(0, 0, 0, 0.1) 0px 5px 5px;
@@ -189,7 +191,7 @@ const LoginSignUp = styled.section`
   align-items: center;
 
   margin-top: 28px;
-  gap: 20px;
+  gap: 16px;
 `;
 
 const LoginSignUpText = styled.section`
@@ -198,7 +200,7 @@ const LoginSignUpText = styled.section`
 `;
 
 const LoginSignUpButton = styled.button`
-  padding: 4px 8px;
+  padding: 5px 12px;
 
   background-color: #ffcc56;
   box-shadow:

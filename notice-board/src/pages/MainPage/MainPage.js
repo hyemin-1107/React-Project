@@ -3,32 +3,36 @@ import styled, { keyframes } from "styled-components";
 import { onClickModal } from "../../utills/onClickModal";
 import SignInModal from "./components/SignInModal";
 import SignUpModal from "./components/SignUpModal";
-import ico_logo from "../../images/ico_logo.png";
+import ico_sun from "../../images/ico_sun.png";
 import ico_comment from "../../images/ico_comment.png";
 import ico_plane from "../../images/ico_plane.png";
 import HeaderContents from "../../components/HeaderContents";
 
-const Main = () => {
+const MainPage = () => {
   const [isSignUpModal, setIsSignUpModal] = useState(false);
   const [isSignInModal, setIsSignInModal] = useState(false);
+  const openSignUpModal = () => {
+    setIsSignUpModal(true);
+    setIsSignInModal(false);
+  };
 
   return (
     <>
       <HeaderContents />
       <MainWrap>
         <LogoMain>
-          <img src={ico_logo} alt="" />
+          <img src={ico_sun} alt="로고이미지" />
           <div>Daily Record</div>
         </LogoMain>
         <MainText>
           <div>자유롭게 게시물을 올리는 공간입니다</div>
           <div>
             나의 일상을
-            <img src={ico_plane} alt="" />
+            <img src={ico_plane} alt="일상" />
             기록하고
           </div>
           <div>
-            댓글로 의견을 나눠보세요 <img src={ico_comment} alt="" />
+            댓글로 의견을 나눠보세요 <img src={ico_comment} alt="의견나누기" />
           </div>
         </MainText>
 
@@ -46,6 +50,7 @@ const Main = () => {
         </LoginButtonWrap>
         <SignUpModal
           isSignUpModal={isSignUpModal}
+          setIsSignUpModal={setIsSignUpModal}
           onClickCloseButton={() =>
             onClickModal(isSignUpModal, setIsSignUpModal)
           }
@@ -55,13 +60,14 @@ const Main = () => {
           onClickCloseButton={() =>
             onClickModal(isSignInModal, setIsSignInModal)
           }
+          openSignUpModal={openSignUpModal}
         />
       </MainWrap>
     </>
   );
 };
 
-export default Main;
+export default MainPage;
 
 const MainWrap = styled.main`
   margin-top: 100px;

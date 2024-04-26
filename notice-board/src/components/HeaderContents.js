@@ -1,18 +1,24 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import ico_logo from "../images/ico_logo.png";
+import ico_sun from "../images/ico_sun.png";
 
 const HeaderContents = () => {
+  const navigate = useNavigate();
+  const navigateToBoard = () => {
+    navigate("/notice-board");
+  };
+
   return (
     <Header>
       <HeaderWrap>
         <Logo>
-          <LogoIco src={ico_logo} />
+          <LogoIco src={ico_sun} />
           <div>Daily Record</div>
         </Logo>
         <Nav>
           <ul>
-            <li>Board</li>
+            <li onClick={navigateToBoard}>Board</li>
           </ul>
         </Nav>
       </HeaderWrap>
@@ -45,7 +51,7 @@ const HeaderWrap = styled.div`
 const Logo = styled.h1`
   display: flex;
   align-items: center;
-  gap: 11px;
+  gap: 8px;
 
   div {
     color: #fff;
@@ -76,6 +82,7 @@ const Nav = styled.nav`
 
       color: #fff;
       text-shadow: 3px 4px 6px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
     }
   }
 `;
