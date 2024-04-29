@@ -8,7 +8,6 @@ const HeaderContents = () => {
   const navigateToBoard = () => {
     navigate("/notice-board");
   };
-
   return (
     <Header>
       <HeaderWrap>
@@ -31,11 +30,11 @@ export default HeaderContents;
 const Header = styled.header`
   height: 80px;
 
-  background-color: #66bacf;
-  border-bottom: 2px solid #444;
+  background-color: #fff;
+  border-bottom: 2px solid #666;
   box-shadow:
-    rgba(0, 0, 0, 0.2) 0px 1px 3px,
-    rgba(0, 0, 0, 0.2) 0px 5px 10px,
+    rgba(0, 0, 0, 0.1) 0px 1px 3px,
+    rgba(0, 0, 0, 0.1) 0px 5px 10px,
     0px 0px 0px;
 `;
 
@@ -43,7 +42,7 @@ const HeaderWrap = styled.div`
   display: flex;
   justify-content: space-between;
 
-  margin: 0 250px;
+  margin: 0 290px;
 
   height: 80px;
 `;
@@ -51,12 +50,13 @@ const HeaderWrap = styled.div`
 const Logo = styled.h1`
   display: flex;
   align-items: center;
-  gap: 8px;
-
+  gap: 4px;
   div {
-    color: #fff;
+    font-size: 39px;
 
-    font-size: 33px;
+    color: #66bacf;
+
+    -webkit-text-stroke: 1px #666;
     text-shadow: 3px 4px 6px rgba(0, 0, 0, 0.2);
   }
 `;
@@ -69,7 +69,7 @@ const Nav = styled.nav`
   ul {
     display: flex;
 
-    gap: 53px;
+    margin-right: 40px;
 
     font-size: 33px;
     font-weight: 600;
@@ -80,8 +80,12 @@ const Nav = styled.nav`
 
       height: 80px;
 
-      color: #fff;
+      font-size: 39px;
+      color: #66bacf;
+
+      -webkit-text-stroke: 1px #666;
       text-shadow: 3px 4px 6px rgba(0, 0, 0, 0.2);
+
       cursor: pointer;
     }
   }

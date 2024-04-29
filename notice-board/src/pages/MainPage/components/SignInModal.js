@@ -11,7 +11,7 @@ const SignInModal = (props) => {
   });
   const { isSignInModal, onClickCloseButton, openSignUpModal } = props;
   const navigate = useNavigate();
-  const onChange = (e) => {
+  const onChangeSignInHandler = (e) => {
     const { value, name } = e.target;
     setUserLogin({
       ...userLogin,
@@ -28,7 +28,6 @@ const SignInModal = (props) => {
       alert("아이디 혹은 비밀번호를 확인해주세요!");
     }
   };
-
   return (
     <SignInModalWrap isSignInModal={isSignInModal}>
       <ModalCloseButton
@@ -42,13 +41,13 @@ const SignInModal = (props) => {
           <LoginInput
             name="id"
             placeholder="Username"
-            onChange={(e) => onChange(e)}
+            onChange={onChangeSignInHandler}
           />
           <LoginInput
             type="password"
             name="pw"
             placeholder="Password"
-            onChange={(e) => onChange(e)}
+            onChange={onChangeSignInHandler}
           />
         </LoginInputWrap>
         <LoginSignInButton onClick={() => onClickLoginButton()}>
@@ -80,11 +79,10 @@ const SignInModalWrap = styled.div`
   width: 650px;
   height: 650px;
 
-  background: #fefefe;
+  background: #fff;
   box-shadow:
     inset 0px -12px 26px rgba(0, 0, 0, 0.1),
-    inset 0px 1px 5px rgba(255, 255, 255, 0.4),
-    2px 3px 10px rgba(0, 0, 0, 0.2);
+    2px 3px 10px rgba(0, 0, 0, 0.1);
 
   border-radius: 24px;
 
@@ -134,7 +132,7 @@ const LoginTitle = styled.h1`
   font-size: 36px;
   color: #66bacf;
 
-  -webkit-text-stroke: 1px #444;
+  -webkit-text-stroke: 1px #666;
   text-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
 `;
 
@@ -173,7 +171,7 @@ const LoginSignInButton = styled.button`
     rgba(0, 0, 0, 0.1) 0px 5px 5px;
 
   cursor: pointer;
-  transition: all 0.2s;
+  transition: 0.2s;
 
   &:hover {
     color: #fff;
@@ -202,9 +200,9 @@ const LoginSignUpText = styled.section`
 const LoginSignUpButton = styled.button`
   padding: 5px 12px;
 
-  background-color: #ffcc56;
+  background-color: #ffc338;
   box-shadow:
-    inset 0px -2px 5px rgba(0, 0, 0, 0.1),
+    inset 0px -2px 3px rgba(0, 0, 0, 0.1),
     2px 3px 5px rgba(0, 0, 0, 0.1);
   border-radius: 4px;
 

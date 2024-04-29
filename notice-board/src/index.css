@@ -6,7 +6,7 @@ html, body, h1, h2, h3, h4, h5, h6, div, span, p, blockquote, pre, code, address
   padding: 0;
   font-family: "IBM Plex Sans KR", serif;
   /* font-family: "Hahmlet", serif; */
-  color: #444;
+  /* color: #444; */
 }
 
 body, input, select, textarea, button, img, fieldset {
@@ -16,7 +16,7 @@ body, input, select, textarea, button, img, fieldset {
 em, i, a, button{
   font-style: normal;
   text-decoration: none;
-  color: #444;
+  color: #555;
 }
 
 ul, ol, li {
@@ -25,7 +25,9 @@ ul, ol, li {
 
 body {
   /* background-color: #3a809b; */
-  background-color: #bed9e3;
+  color: #555;
+  background-color: #dae5e8;
+
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

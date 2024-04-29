@@ -15,7 +15,6 @@ const MainPage = () => {
     setIsSignUpModal(true);
     setIsSignInModal(false);
   };
-
   return (
     <>
       <HeaderContents />
@@ -35,7 +34,6 @@ const MainPage = () => {
             댓글로 의견을 나눠보세요 <img src={ico_comment} alt="의견나누기" />
           </div>
         </MainText>
-
         <LoginButtonWrap>
           <LoginButton
             onClick={() => onClickModal(isSignUpModal, setIsSignUpModal)}
@@ -104,7 +102,7 @@ const LogoMain = styled.h2`
   margin-bottom: 30px;
 
   font-style: normal;
-  font-size: 48px;
+  font-size: 52px;
   font-weight: 600;
 
   text-align: center;
@@ -133,10 +131,9 @@ const LoginButtonWrap = styled.section`
 const LoginButton = styled.button`
   padding: 15px 45px;
 
-  background-color: #ffcc56;
+  background-color: #ffc338;
   box-shadow:
-    inset 0px -12px 26px rgba(0, 0, 0, 0.1),
-    inset 0px 1px 5px rgba(255, 255, 255, 0.4),
+    inset 0px -12px 26px rgba(0, 0, 0, 0.05),
     2px 3px 10px rgba(0, 0, 0, 0.2);
   border-radius: 14px;
 

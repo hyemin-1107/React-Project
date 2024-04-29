@@ -1,44 +1,64 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import ico_close from "../../../images/ico_close.png";
-import ico_important from "../../../images/ico_important.png";
 
 const SignUpModal = (props) => {
-  // 유저네임, 생년월일, 비번, 비번확인 상태값
+  // 유저네임, 생년월일, 비번, 비번확인 상태 값
   const [userData, setUserData] = useState({
     username: "",
     birthDate: "",
     password: "",
     confirmPassword: "",
   });
-
+  // 체크박스 상태 값
+  const [isAgreementChecked, setIsAgreementChecked] = useState(false);
   const { isSignUpModal, onClickCloseButton, setIsSignUpModal } = props;
-
   // input창에 입력할때 해당 값 변화를 감지하고 업데이트
-  const onChangeUsernameHandler = (e) => {
+  const onChangeSignUpHandler = (e) => {
     setUserData({
       ...userData,
       [e.target.name]: e.target.value,
     });
   };
-
+  // 체크박스 값 변화를 감지하고 업데이트
+  const onChangeAgreementCheckedHandler = (e) => {
+    setIsAgreementChecked(e.target.checked);
+  };
   const { username, birthDate, password, confirmPassword } = userData;
-
   // 비밀번호 일치 체크
   const passwordCheck = password === confirmPassword;
-
   // 모든 값 입력 완료 체크
   const inputCompleteButton = () => {
-    if (username !== "" && birthDate !== "" && passwordCheck === true) {
+    // 모든 필수 입력 값이 제대로 입력되었을 때
+    if (
+      username !== "" &&
+      birthDate !== "" &&
+      password !== "" &&
+      passwordCheck === true &&
+      isAgreementChecked
+    ) {
       alert("가입이 완료되었습니다.");
-      setIsSignUpModal(false);
-    } else if (username !== "" && birthDate !== "" && passwordCheck === false) {
-      alert("비밀번호가 일치 하지않습니다.");
-    } else {
+      setIsSignUpModal(false); // 회원가입 모달 닫기
+    }
+    // 비밀번호가 일치하지 않을 때
+    else if (username !== "" && birthDate !== "" && passwordCheck === false) {
+      alert("비밀번호가 일치하지 않습니다.");
+    }
+    // 개인정보 동의가 되지 않았을 때
+    else if (
+      username !== "" &&
+      birthDate !== "" &&
+      password !== "" &&
+      passwordCheck === true &&
+      isAgreementChecked === false
+    ) {
+      alert("개인정보 동의를 완료해주세요.");
+    }
+    // 필수 입력 값이 입력되지 않았을 때
+    else {
       alert("작성을 완료해주세요");
     }
   };
-
   return (
     <SignUpModalWrap isSignUpModal={isSignUpModal}>
       <ModalCloseButton
@@ -58,9 +78,7 @@ const SignUpModal = (props) => {
             name="username"
             placeholder="Username"
             value={username}
-            onChange={(e) =>
-              setUserData({ ...userData, username: e.target.value })
-            }
+            onChange={onChangeSignUpHandler}
           ></input>
         </div>
         <div>
@@ -73,9 +91,7 @@ const SignUpModal = (props) => {
             name="birthDate"
             placeholder="Birth Date"
             value={birthDate}
-            onChange={(e) =>
-              setUserData({ ...userData, birthDate: e.target.value })
-            }
+            onChange={onChangeSignUpHandler}
           ></input>
         </div>
         <div>
@@ -88,9 +104,7 @@ const SignUpModal = (props) => {
             name="password"
             placeholder="Password"
             value={password}
-            onChange={(e) =>
-              setUserData({ ...userData, password: e.target.value })
-            }
+            onChange={onChangeSignUpHandler}
           ></input>
         </div>
         <div>
@@ -103,20 +117,24 @@ const SignUpModal = (props) => {
             name="confirmPassword"
             placeholder="Password"
             value={confirmPassword}
-            onChange={(e) =>
-              setUserData({ ...userData, confirmPassword: e.target.value })
-            }
+            onChange={onChangeSignUpHandler}
           ></input>
         </div>
       </SignUpInputWrap>
       <Agreement>
-        <input type="checkbox" id="checkbox" />
+        <input
+          type="checkbox"
+          id="checkbox"
+          onChange={onChangeAgreementCheckedHandler}
+        />
         <label label for="checkbox">
           개인정보 수집 및 이용에 동의합니다.
         </label>
       </Agreement>
       <SignUpButtoncontents>
-        <button onClick={inputCompleteButton}>가입 완료</button>
+        <button type="submit" onClick={inputCompleteButton}>
+          가입 완료
+        </button>
       </SignUpButtoncontents>
     </SignUpModalWrap>
   );
@@ -126,7 +144,6 @@ export default SignUpModal;
 
 const SignUpModalWrap = styled.div`
   display: ${(props) => (props.isSignUpModal ? "block" : "none")};
-
   position: fixed;
 
   top: 50%;
@@ -137,12 +154,11 @@ const SignUpModalWrap = styled.div`
   width: 650px;
   height: 650px;
 
-  background: #fefefe;
-
+  background: #fff;
   box-shadow:
     inset 0px -12px 26px rgba(0, 0, 0, 0.1),
-    inset 0px 1px 5px rgba(255, 255, 255, 0.4),
-    2px 3px 10px rgba(0, 0, 0, 0.2);
+    2px 3px 10px rgba(0, 0, 0, 0.1);
+
   border-radius: 24px;
 
   animation: modal 0.5s ease;
@@ -189,20 +205,7 @@ const SignUpInputWrap = styled.article`
 
   gap: 16px;
   margin: 80px 100px 10px;
-  /* label{
-    position: relative;
-    &:after{
-        content: '';
-        position: absolute;
-        display: inline-block;
-        top: 5px;
-        right: -18px;
-    width: 13px;
-    height: 13px;
-    background: url(${ico_important})no-repeat;
-    background-size: 100%;
-   }
-} */
+
   label {
     span {
       color: red;
@@ -231,12 +234,12 @@ const Agreement = styled.span`
   margin: 0 100px;
 
   input {
-    /* display: none; */
     &:checked + label {
       font-style: italic;
     }
     cursor: pointer;
   }
+
   label {
     cursor: pointer;
   }
@@ -253,9 +256,9 @@ const SignUpButtoncontents = styled.section`
     padding: 10px;
     width: 100%;
 
-    background-color: #ffcc56;
+    background-color: #ffc338;
     box-shadow:
-      inset 0px -2px 10px rgba(0, 0, 0, 0.1),
+      inset 0px -2px 8px rgba(0, 0, 0, 0.1),
       2px 3px 10px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
 
