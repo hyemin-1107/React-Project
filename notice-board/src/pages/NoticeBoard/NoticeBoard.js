@@ -1,63 +1,88 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import HeaderContents from "../../components/HeaderContents";
+import Pagination from "./components/Pagination";
 import styled from "styled-components";
 import img_photo from "../../images/img_photo.jpg";
 
-const NoticeBoard = () => {
+const NoticeBoard = (props) => {
   const navigate = useNavigate();
+  const [page, setPage] = useState(1);
+  const { totalPages } = props;
   const navigateToCreateBoard = () => {
     navigate("/create-board");
+  };
+  const navigateBoardDetailView = () => {
+    navigate("/board-detail-view");
+  };
+  const getCurrentDate = () => {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+    const day = String(currentDate.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+  const onChangePage = (value) => {
+    setPage(value);
   };
   return (
     <>
       <HeaderContents />
       <BoardContainer>
-        <Section>
-          <DataImg src={img_photo} alt="첨부이미지" />
-          <DataContainer>
+        {/* TODO 입력함수 가데이터 사용 */}
+        <Section onClick={navigateBoardDetailView}>
+          <UserBoardImg src={img_photo} alt="첨부이미지" />
+          <UserBoardContainer>
             <h2>제목</h2>
             <p>작성자</p>
-          </DataContainer>
+            <span>{getCurrentDate()}</span>
+          </UserBoardContainer>
         </Section>
-        <Section>
-          <DataImg src={img_photo} alt="" />
-          <DataContainer>
+        <Section onClick={navigateBoardDetailView}>
+          <UserBoardImg src={img_photo} alt="" />
+          <UserBoardContainer>
             <h2>제목</h2>
             <p>작성자</p>
-          </DataContainer>
+          </UserBoardContainer>
         </Section>
-        <Section>
-          <DataImg src={img_photo} alt="" />
-          <DataContainer>
+        <Section onClick={navigateBoardDetailView}>
+          <UserBoardImg src={img_photo} alt="" />
+          <UserBoardContainer>
             <h2>제목</h2>
             <p>작성자</p>
-          </DataContainer>
+          </UserBoardContainer>
         </Section>
-        <Section>
-          <DataImg src={img_photo} alt="" />
-          <DataContainer>
+        <Section onClick={navigateBoardDetailView}>
+          <UserBoardImg src={img_photo} alt="" />
+          <UserBoardContainer>
             <h2>제목</h2>
             <p>작성자</p>
-          </DataContainer>
+          </UserBoardContainer>
         </Section>
-        <Section>
-          <DataImg src={img_photo} alt="" />
-          <DataContainer>
+        <Section onClick={navigateBoardDetailView}>
+          <UserBoardImg src={img_photo} alt="" />
+          <UserBoardContainer>
             <h2>제목</h2>
             <p>작성자</p>
-          </DataContainer>
+          </UserBoardContainer>
         </Section>
-        <Section>
-          <DataImg src={img_photo} alt="" />
-          <DataContainer>
+        <Section onClick={navigateBoardDetailView}>
+          <UserBoardImg src={img_photo} alt="" />
+          <UserBoardContainer>
             <h2>제목</h2>
             <p>작성자</p>
-          </DataContainer>
+          </UserBoardContainer>
         </Section>
       </BoardContainer>
       <CreateButtonWrap>
-        <button onClick={navigateToCreateBoard}> 게시물 올리기</button>
+        <Pagination
+          onChangePage={onChangePage}
+          page={page}
+          totalPages={totalPages}
+        />
+        <NavigateToCreateBoard onClick={navigateToCreateBoard}>
+          게시물 올리기
+        </NavigateToCreateBoard>
       </CreateButtonWrap>
     </>
   );
@@ -87,8 +112,8 @@ const Section = styled.section`
   border-radius: 6px;
 
   box-shadow:
-    inset 0px -2px 10px rgba(0, 0, 0, 0.1),
-    2px 3px 10px rgba(0, 0, 0, 0.1);
+    rgba(14, 30, 37, 0.1) 0px 2px 4px 0px,
+    rgba(14, 30, 37, 0.2) 0px 2px 16px 0px;
   box-sizing: border-box;
 
   cursor: pointer;
@@ -98,7 +123,7 @@ const Section = styled.section`
   }
 `;
 
-const DataImg = styled.img`
+const UserBoardImg = styled.img`
   width: 100%;
   height: 65%;
 
@@ -106,44 +131,45 @@ const DataImg = styled.img`
   object-fit: cover;
 `;
 
-const DataContainer = styled.div`
+const UserBoardContainer = styled.div`
   margin-top: 10px;
-
   h2 {
   }
   p {
-    margin-top: 26px;
+    margin-top: 16px;
     color: #666;
   }
 `;
 
 const CreateButtonWrap = styled.section`
   display: flex;
-  justify-content: end;
+  justify-content: space-between;
 
   margin: 0 auto;
 
   width: 900px;
+`;
 
-  button {
-    margin-top: 3px;
-    padding: 10px 20px;
+const NavigateToCreateBoard = styled.button`
+  padding: 10px 30px;
 
-    color: #fff;
-    background-color: #ffc338;
+  font-size: 16px;
+  font-weight: bold;
 
-    box-shadow:
-      inset 0px 1px 5px rgba(0, 0, 0, 0.05),
-      2px 3px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 4px;
+  border: 1px solid #666;
+  border-radius: 4px;
 
-    font-weight: 500;
-    font-size: 17px;
+  color: white;
+  background-color: #66bacf;
 
-    cursor: pointer;
-    transition: 0.2s;
+  box-shadow:
+    inset 0px -2px 8px rgba(0, 0, 0, 0.1),
+    2px 3px 10px rgba(0, 0, 0, 0.1);
 
-    &:hover {
-    }
+  transition: 0.2s;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #3a809b;
   }
 `;

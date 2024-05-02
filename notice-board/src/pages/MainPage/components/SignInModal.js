@@ -22,7 +22,6 @@ const SignInModal = (props) => {
     let loginId = "";
     let loginPw = "";
     if (userLogin.id === loginId && userLogin.pw === loginPw) {
-      // alert("로그인 성공!");
       navigate("/notice-board");
     } else {
       alert("아이디 혹은 비밀번호를 확인해주세요!");
@@ -81,8 +80,8 @@ const SignInModalWrap = styled.div`
 
   background: #fff;
   box-shadow:
-    inset 0px -12px 26px rgba(0, 0, 0, 0.1),
-    2px 3px 10px rgba(0, 0, 0, 0.1);
+    rgba(14, 30, 37, 0.1) 0px 2px 4px 0px,
+    rgba(14, 30, 37, 0.2) 0px 2px 16px 0px;
 
   border-radius: 24px;
 
@@ -150,7 +149,6 @@ const LoginInput = styled.input`
   width: 100%;
 
   &:focus {
-    border-color: #bed9e3;
     outline: none;
     box-shadow: rgba(0, 0, 0, 0.1) 0px 3px 5px;
   }
