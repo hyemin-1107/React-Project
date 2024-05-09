@@ -1,73 +1,101 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import HeaderContents from "../../components/HeaderContents";
-import Pagination from "./components/Pagination";
 import styled from "styled-components";
+import { onClickModal } from "../../utills/onClickModal";
+import { format } from "date-fns";
+import HeaderContents from "../../components/HeaderContents";
+import BoardDetailView from "../BoardDetailView/BoardDetailView";
+import Pagination from "./components/Pagination";
 import img_photo from "../../images/img_photo.jpg";
 
 const NoticeBoard = (props) => {
-  const navigate = useNavigate();
+  const [isBoardDetailModal, setIsBoardDetailModal] = useState(false);
   const [page, setPage] = useState(1);
   const { totalPages } = props;
+  const navigate = useNavigate();
   const navigateToCreateBoard = () => {
     navigate("/create-board");
   };
-  const navigateBoardDetailView = () => {
-    navigate("/board-detail-view");
-  };
-  const getCurrentDate = () => {
-    const currentDate = new Date();
-    const year = currentDate.getFullYear();
-    const month = String(currentDate.getMonth() + 1).padStart(2, "0");
-    const day = String(currentDate.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
+  const currentDate = new Date();
+  const formattedDate = format(currentDate, "yyyy-MM-dd");
   const onChangePage = (value) => {
     setPage(value);
   };
+
   return (
     <>
       <HeaderContents />
+      <BoardDetailView
+        isBoardDetailModal={isBoardDetailModal}
+        setIsBoardDetailModal={setIsBoardDetailModal}
+        onClickCloseButton={() =>
+          onClickModal(isBoardDetailModal, setIsBoardDetailModal)
+        }
+      />
       <BoardContainer>
         {/* TODO 입력함수 가데이터 사용 */}
-        <Section onClick={navigateBoardDetailView}>
-          <UserBoardImg src={img_photo} alt="첨부이미지" />
+        <Section
+          onClick={() =>
+            onClickModal(isBoardDetailModal, setIsBoardDetailModal)
+          }
+        >
+          <BoardImg src={img_photo} alt="첨부이미지" />
           <UserBoardContainer>
             <h2>제목</h2>
             <p>작성자</p>
-            <span>{getCurrentDate()}</span>
+            <span>{formattedDate}</span>
           </UserBoardContainer>
         </Section>
-        <Section onClick={navigateBoardDetailView}>
-          <UserBoardImg src={img_photo} alt="" />
-          <UserBoardContainer>
-            <h2>제목</h2>
-            <p>작성자</p>
-          </UserBoardContainer>
-        </Section>
-        <Section onClick={navigateBoardDetailView}>
-          <UserBoardImg src={img_photo} alt="" />
-          <UserBoardContainer>
-            <h2>제목</h2>
-            <p>작성자</p>
-          </UserBoardContainer>
-        </Section>
-        <Section onClick={navigateBoardDetailView}>
-          <UserBoardImg src={img_photo} alt="" />
+        <Section
+          onClick={() =>
+            onClickModal(isBoardDetailModal, setIsBoardDetailModal)
+          }
+        >
+          <BoardImg src={img_photo} alt="" />
           <UserBoardContainer>
             <h2>제목</h2>
             <p>작성자</p>
           </UserBoardContainer>
         </Section>
-        <Section onClick={navigateBoardDetailView}>
-          <UserBoardImg src={img_photo} alt="" />
+        <Section
+          onClick={() =>
+            onClickModal(isBoardDetailModal, setIsBoardDetailModal)
+          }
+        >
+          <BoardImg src={img_photo} alt="" />
           <UserBoardContainer>
             <h2>제목</h2>
             <p>작성자</p>
           </UserBoardContainer>
         </Section>
-        <Section onClick={navigateBoardDetailView}>
-          <UserBoardImg src={img_photo} alt="" />
+        <Section
+          onClick={() =>
+            onClickModal(isBoardDetailModal, setIsBoardDetailModal)
+          }
+        >
+          <BoardImg src={img_photo} alt="" />
+          <UserBoardContainer>
+            <h2>제목</h2>
+            <p>작성자</p>
+          </UserBoardContainer>
+        </Section>
+        <Section
+          onClick={() =>
+            onClickModal(isBoardDetailModal, setIsBoardDetailModal)
+          }
+        >
+          <BoardImg src={img_photo} alt="" />
+          <UserBoardContainer>
+            <h2>제목</h2>
+            <p>작성자</p>
+          </UserBoardContainer>
+        </Section>
+        <Section
+          onClick={() =>
+            onClickModal(isBoardDetailModal, setIsBoardDetailModal)
+          }
+        >
+          <BoardImg src={img_photo} alt="" />
           <UserBoardContainer>
             <h2>제목</h2>
             <p>작성자</p>
@@ -123,7 +151,7 @@ const Section = styled.section`
   }
 `;
 
-const UserBoardImg = styled.img`
+const BoardImg = styled.img`
   width: 100%;
   height: 65%;
 

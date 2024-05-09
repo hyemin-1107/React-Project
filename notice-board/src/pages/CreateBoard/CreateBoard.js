@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import HeaderContents from "../../components/HeaderContents";
 import styled from "styled-components";
+import HeaderContents from "../../components/HeaderContents";
 
 const CreateBoard = () => {
   const [formData, setFormData] = useState({
@@ -66,9 +66,9 @@ const CreateBoard = () => {
               value={formData.title}
               onChange={handleInputChange}
             />
-            <PreviewImg>
+            <PreviewImgContents>
               {previewURL && <img src={previewURL} alt="" />}
-            </PreviewImg>
+            </PreviewImgContents>
             <TextareaField
               id="content"
               name="content"
@@ -132,7 +132,7 @@ const InputField = styled.input`
   }
 `;
 
-const PreviewImg = styled.div`
+const PreviewImgContents = styled.div`
   margin-top: 10px;
 
   height: 300px;

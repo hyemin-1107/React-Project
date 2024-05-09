@@ -1,56 +1,143 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import img_photo from "../../images/img_photo.jpg";
-import HeaderContents from "../../components/HeaderContents";
+import ico_close from "../../images/ico_close.png";
 
-const BoardDetailView = () => {
+const BoardDetailView = (props) => {
+  const [inputComment, setInputComment] = useState("");
+  const { isBoardDetailModal, onClickCloseButton } = props;
+
+  const InputComment = (e) => {
+    const { value } = e.target;
+
+    setInputComment(value);
+  };
   return (
-    <>
-      <HeaderContents />
+    <Wrap isBoardDetailModal={isBoardDetailModal}>
       <BoardDetailViewContainer>
-        <h2>제목</h2>
-        <BoardDetailViewUserDate>
-          <div>작성자</div>
-          <div>날짜</div>
-        </BoardDetailViewUserDate>
-        <img src={img_photo} alt="" />
-        <p>asdasd</p>
-        <CommentContainer>
-          <input placeholder="Add a comment..." />
-          <button>POST</button>
-        </CommentContainer>
+        <BoardDetailViewWrap>
+          <BoardDetailViewHeader>
+            <h2>제목</h2>
+          </BoardDetailViewHeader>
+          <CloseButton src={ico_close} alt="" onClick={onClickCloseButton} />
+          <BoardDetailViewUserDate>
+            <div>작성자</div>
+            <div>날짜</div>
+          </BoardDetailViewUserDate>
+          <BoardImg src={img_photo} alt="" />
+          <p>dd</p>
+          <CommentContainer>
+            <input
+              onChange={InputComment}
+              value={inputComment}
+              placeholder="Add a comment..."
+            />
+            <button>POST</button>
+          </CommentContainer>
+        </BoardDetailViewWrap>
       </BoardDetailViewContainer>
-    </>
+    </Wrap>
   );
 };
 
 export default BoardDetailView;
 
-const BoardDetailViewContainer = styled.section`
-  margin: 40px auto 80px;
-  padding: 36px 36px 20px 36px;
+const Wrap = styled.div`
+  display: ${(props) => (props.isBoardDetailModal ? "block" : "none")};
+  position: fixed;
+  top: 0;
+  left: 0;
 
-  width: 800px;
-  /* height: 700px; */
+  width: 100%;
+  height: 100%;
+
+  background-color: rgba(0, 0, 0, 0.3);
+`;
+
+const BoardDetailViewHeader = styled.header`
+  position: fixed;
+  height: 50px;
+  width: 93%;
+  background-color: #fff;
+  padding-bottom: 5px;
+  h2 {
+    margin-left: 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  }
+`;
+const BoardDetailViewContainer = styled.section`
+  position: fixed;
+  top: 52%;
+  left: 50%;
+  z-index: 1;
+
+  width: 805px;
 
   background: #fff;
   border-radius: 24px;
+  padding: 30px 20px;
 
   box-shadow:
     rgba(14, 30, 37, 0.1) 0px 2px 4px 0px,
     rgba(14, 30, 37, 0.2) 0px 2px 16px 0px;
   box-sizing: border-box;
 
-  h2 {
-    padding: 0 0 16px 6px;
-    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  transform: translate(-50%, -50%);
+  animation: modal 0.5s ease;
+  @keyframes modal {
+    from {
+      transform: translate(-50%, -62%);
+    }
+    to {
+      transform: translate(-50%, -50%);
+    }
   }
-  img {
-    height: 350px;
-    margin: 10px 6px;
-  }
+`;
+
+const BoardDetailViewWrap = styled.div`
+  max-height: 730px;
+  overflow-y: auto;
   p {
     margin: 20px 6px;
+    word-break: break-all;
+  }
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #bed9e3;
+  }
+`;
+
+const BoardImg = styled.img`
+  height: 350px;
+  margin: 10px 16px;
+`;
+
+const CloseButton = styled.img`
+  position: absolute;
+  right: 0;
+  top: 0;
+
+  margin: 19px 24px;
+  padding: 20px;
+  width: 22px;
+
+  cursor: pointer;
+
+  &:hover {
+    animation: close 0.3s ease;
+
+    @keyframes close {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(90deg);
+      }
+    }
   }
 `;
 
@@ -58,7 +145,7 @@ const BoardDetailViewUserDate = styled.div`
   display: flex;
   justify-content: space-between;
 
-  margin: 10px 6px 0px 6px;
+  margin: 62px 30px 0px 16px;
 `;
 
 const CommentContainer = styled.div`
@@ -72,7 +159,7 @@ const CommentContainer = styled.div`
     margin: 26px 0;
     padding: 6px;
 
-    width: 85%;
+    width: 83%;
 
     &:focus {
       outline: none;
@@ -80,7 +167,7 @@ const CommentContainer = styled.div`
     }
   }
   button {
-    margin-left: 20px;
+    margin-left: 22px;
     padding: 6px 20px;
 
     font-size: 16px;
