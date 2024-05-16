@@ -1,15 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import axios from "axios";
 import ico_close from "../../../images/ico_close.png";
 
 const SignUpModal = (props) => {
   const [userData, setUserData] = useState({
-    username: "",
-    birthDate: "",
-    password: "",
+    userId: "",
+    userPw: "",
+    birth: "",
     confirmPassword: "",
   });
   const { isSignUpModal, onClickCloseButton, setIsSignUpModal } = props;
+
+  useEffect(() => {
+    if (isSignUpModal) {
+      setUserData({
+        userId: "",
+        userPw: "",
+        birth: "",
+        confirmPassword: "",
+      });
+    }
+  }, [isSignUpModal]);
+
   const onChangeSignUpHandler = (e) => {
     const { name, value } = e.target;
     setUserData({
@@ -17,23 +30,40 @@ const SignUpModal = (props) => {
       [name]: value,
     });
   };
-  const { username, birthDate, password, confirmPassword } = userData;
-  const passwordCheck = password === confirmPassword;
-  const inputCompleteButton = () => {
+
+  const { userId, birth, userPw, confirmPassword } = userData;
+  const passwordCheck = userPw === confirmPassword;
+
+  const handleSignUpButton = () => {
     if (
-      username !== "" &&
-      birthDate !== "" &&
-      password !== "" &&
+      userId !== "" &&
+      birth !== "" &&
+      userPw !== "" &&
       passwordCheck === true
     ) {
-      alert("가입이 완료되었습니다.");
-      setIsSignUpModal(false);
-    } else if (username !== "" && birthDate !== "" && passwordCheck === false) {
+      axios
+        .post("백엔드주소", {
+          userId: userId,
+          userPw: userPw,
+          birth: birth,
+        })
+        //비동기 작업이 성공적으로 완료되면 실행되는 콜백 함수
+        .then((res) => {
+          console.log(res.data);
+          if (res.data.code === 200) {
+            alert("가입이 완료되었습니다.");
+            setIsSignUpModal(false);
+          } else if (res.data.code === 500) {
+            alert("중복된 이름입니다.");
+          }
+        });
+    } else if (userId !== "" && birth !== "" && passwordCheck === false) {
       alert("비밀번호가 일치하지 않습니다.");
     } else {
-      alert("작성을 완료해주세요");
+      alert("작성을 완료해주세요.");
     }
   };
+
   return (
     <SignUpModalWrap isSignUpModal={isSignUpModal}>
       <ModalCloseButton
@@ -50,36 +80,36 @@ const SignUpModal = (props) => {
           </label>
           <input
             type="text"
-            id="username"
-            name="username"
+            id="userId"
+            name="userId"
             placeholder="Username"
-            value={username}
+            value={userId}
             onChange={onChangeSignUpHandler}
           ></input>
         </div>
         <div>
-          <label htmlFor="birthDate">
+          <label htmlFor="birth">
             생년월일을 입력해주세요(6자리) <span>*</span>
           </label>
           <input
             type="number"
-            id="birthDate"
-            name="birthDate"
+            id="birth"
+            name="birth"
             placeholder="Birth Date"
-            value={birthDate}
+            value={birth}
             onChange={onChangeSignUpHandler}
           ></input>
         </div>
         <div>
-          <label htmlFor="password">
+          <label htmlFor="userPw">
             비밀번호를 입력해주세요 <span>*</span>
           </label>
           <input
             type="password"
-            id="password"
-            name="password"
+            id="userPw"
+            name="userPw"
             placeholder="Password"
-            value={password}
+            value={userPw}
             onChange={onChangeSignUpHandler}
           ></input>
         </div>
@@ -98,7 +128,7 @@ const SignUpModal = (props) => {
         </div>
       </SignUpInputWrap>
       <SignUpButtoncontents>
-        <button type="submit" onClick={inputCompleteButton}>
+        <button type="submit" onClick={handleSignUpButton}>
           가입 완료
         </button>
       </SignUpButtoncontents>

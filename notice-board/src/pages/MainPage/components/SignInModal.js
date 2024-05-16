@@ -1,32 +1,66 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-
+import axios from "axios";
 import ico_close from "../../../images/ico_close.png";
 
 const SignInModal = (props) => {
-  const [userLogin, setUserLogin] = useState({
-    id: "",
-    pw: "",
+  const [userData, setUserData] = useState({
+    userId: "",
+    userPw: "",
   });
   const { isSignInModal, onClickCloseButton, openSignUpModal } = props;
   const navigate = useNavigate();
-  const onChangeSignInHandler = (e) => {
-    const { value, name } = e.target;
-    setUserLogin({
-      ...userLogin,
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setUserData({
+      ...userData,
       [name]: value,
     });
   };
-  const onClickLoginButton = () => {
-    let loginId = "";
-    let loginPw = "";
-    if (userLogin.id === loginId && userLogin.pw === loginPw) {
-      navigate("/notice-board");
-    } else {
-      alert("아이디 혹은 비밀번호를 확인해주세요!");
+
+  const handleLoginButton = async (e) => {
+    e.preventDefault();
+    if (!userData.userId || !userData.userPw) {
+      alert("아이디와 비밀번호를 입력하세요.");
+      return;
     }
+    // 요청 보내기 전에 userData 확인 데이터
+    console.log("로그인 요청 전:", userData);
+    axios.post("백엔드주소", userData).then((res) => {
+      console.log("로그인 응답:", res.data);
+
+      const { token } = res.data;
+      localStorage.setItem("token", token);
+
+      if (res.data.code === 200) {
+        alert("로그인 성공!");
+        navigate("/notice-board");
+      } else if (res.data.code === 401) {
+        alert("아이디 또는 비밀번호가 잘못되었습니다.");
+      } else if (res.data.code === 500) {
+        alert("서버에 에러가 발생했습니다.");
+      } else {
+        alert("서버에 에러가 발생했습니다.");
+      }
+    });
+    // .catch((error) => {
+    //   if (error.response) {
+    //     //status HTTP상태코드
+    //     if (error.response.code === 401) {
+    //       alert("아이디 또는 비밀번호가 잘못되었습니다.");
+    //     } else if (error.response.code === 500) {
+    //       alert("서버에 에러가 발생했습니다.");
+    //     } else {
+    //       alert("서버에 에러가 발생했습니다.");
+    //     }
+    //   } else {
+    //     alert("에러가 발생했습니다.");
+    //   }
+    // });
   };
+
   return (
     <SignInModalWrap isSignInModal={isSignInModal}>
       <ModalCloseButton
@@ -36,20 +70,25 @@ const SignInModal = (props) => {
       />
       <LoginWrap>
         <LoginTitle>Sign In</LoginTitle>
-        <LoginInputWrap>
-          <LoginInput
-            name="id"
-            placeholder="Username"
-            onChange={onChangeSignInHandler}
-          />
-          <LoginInput
-            type="password"
-            name="pw"
-            placeholder="Password"
-            onChange={onChangeSignInHandler}
-          />
-        </LoginInputWrap>
-        <LoginSignInButton onClick={() => onClickLoginButton()}>
+        <form>
+          <LoginInputWrap>
+            <LoginInput
+              type="text"
+              name="userId"
+              placeholder="Username"
+              value={userData.userId}
+              onChange={handleInputChange}
+            />
+            <LoginInput
+              type="password"
+              name="userPw"
+              placeholder="Password"
+              value={userData.userPw}
+              onChange={handleInputChange}
+            />
+          </LoginInputWrap>
+        </form>
+        <LoginSignInButton type="submit" onClick={handleLoginButton}>
           Sign In
         </LoginSignInButton>
         <LoginSignUp>

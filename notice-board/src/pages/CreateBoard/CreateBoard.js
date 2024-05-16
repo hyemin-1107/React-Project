@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import HeaderContents from "../../components/HeaderContents";
@@ -51,6 +51,17 @@ const CreateBoard = () => {
     //   폼 제출의 기본 동작인 페이지 새로고침을 막음
     //   폼 데이터를 처리하고 다른 작업을 수행하는 코드를 추가
   };
+
+  // 토큰 가져오기
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    if (!token) {
+      navigate("/");
+      alert("로그인 후 이용해주세요");
+    }
+  });
+
   return (
     <>
       <HeaderContents />

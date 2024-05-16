@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import img_photo from "../../images/img_photo.jpg";
-import ico_close from "../../images/ico_close.png";
+import img_photo from "../../../images/img_photo.jpg";
+import ico_close from "../../../images/ico_close.png";
 
 const BoardDetailView = (props) => {
   const [inputComment, setInputComment] = useState("");
@@ -121,7 +121,7 @@ const CloseButton = styled.img`
   right: 0;
   top: 0;
 
-  margin: 19px 24px;
+  margin: 19px 20px;
   padding: 20px;
   width: 22px;
 

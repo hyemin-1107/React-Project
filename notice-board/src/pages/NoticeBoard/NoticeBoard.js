@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { onClickModal } from "../../utills/onClickModal";
 import { format } from "date-fns";
 import HeaderContents from "../../components/HeaderContents";
-import BoardDetailView from "../BoardDetailView/BoardDetailView";
+import BoardDetailView from "./components/BoardDetailView";
 import Pagination from "./components/Pagination";
 import img_photo from "../../images/img_photo.jpg";
 
@@ -16,6 +16,7 @@ const NoticeBoard = (props) => {
   const navigateToCreateBoard = () => {
     navigate("/create-board");
   };
+
   const currentDate = new Date();
   const formattedDate = format(currentDate, "yyyy-MM-dd");
   const onChangePage = (value) => {
