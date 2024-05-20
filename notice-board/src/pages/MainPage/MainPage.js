@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import { onClickModal } from "../../utills/onClickModal";
 import SignInModal from "./components/SignInModal";
@@ -6,15 +6,32 @@ import SignUpModal from "./components/SignUpModal";
 import ico_sun from "../../images/ico_sun.png";
 import ico_comment from "../../images/ico_comment.png";
 import ico_plane from "../../images/ico_plane.png";
+import ico_close from "../../images/ico_close.png";
 import HeaderContents from "../../components/HeaderContents";
 
 const MainPage = () => {
   const [isSignUpModal, setIsSignUpModal] = useState(false);
   const [isSignInModal, setIsSignInModal] = useState(false);
+  const [isProfileUpdate, setIsProfileUpdate] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const openSignUpModal = () => {
     setIsSignUpModal(true);
     setIsSignInModal(false);
   };
+
+  useEffect(() => {
+    // 페이지가 로드될 때 로컬 스토리지에서 토큰을 확인하여 로그인 상태를 설정
+    const token = localStorage.getItem("token");
+    if (token) {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // 토큰 삭제
+    setIsLoggedIn(false);
+  };
+
   return (
     <>
       <HeaderContents />
@@ -34,18 +51,73 @@ const MainPage = () => {
             댓글로 의견을 나눠보세요 <img src={ico_comment} alt="의견나누기" />
           </div>
         </MainText>
-        <LoginButtonWrap>
-          <LoginButton
-            onClick={() => onClickModal(isSignUpModal, setIsSignUpModal)}
-          >
-            Sign up
-          </LoginButton>
-          <LoginButton
-            onClick={() => onClickModal(isSignInModal, setIsSignInModal)}
-          >
-            Sign in
-          </LoginButton>
-        </LoginButtonWrap>
+        {isLoggedIn ? (
+          <LoginButtonWrap>
+            <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
+            <LogoutButton
+              onClick={() => onClickModal(isProfileUpdate, setIsProfileUpdate)}
+            >
+              내 정보 수정
+            </LogoutButton>
+          </LoginButtonWrap>
+        ) : (
+          <LoginButtonWrap>
+            <LoginButton
+              onClick={() => onClickModal(isSignUpModal, setIsSignUpModal)}
+            >
+              Sign up
+            </LoginButton>
+            <LoginButton
+              onClick={() => onClickModal(isSignInModal, setIsSignInModal)}
+            >
+              Sign in
+            </LoginButton>
+          </LoginButtonWrap>
+        )}
+        <ProfileUpdateModal isProfileUpdate={isProfileUpdate}>
+          <ModalCloseButton
+            onClick={() => onClickModal(isProfileUpdate, setIsProfileUpdate)}
+            src={ico_close}
+            alt="닫기"
+          />
+          <ProfileUpdateWrap>
+            <h2>비밀번호 변경</h2>
+            <div>
+              <label htmlFor="userPw">
+                기존 비밀번호를 입력해주세요.<span>*</span>
+              </label>
+              <input
+                type="password"
+                id="userPw"
+                name="userPw"
+                placeholder="password"
+              ></input>
+            </div>
+            <div>
+              <label htmlFor="newUserPw">
+                새로운 비밀번호를 입력해주세요.<span>*</span>
+              </label>
+              <input
+                type="password"
+                id="newUserPw"
+                name="newUserPw"
+                placeholder="password"
+              ></input>
+            </div>
+            <div>
+              <label htmlFor="newUserPw">
+                한번 더 입력해주세요.<span>*</span>
+              </label>
+              <input
+                type="password"
+                id="newUserPw"
+                name="newUserPw"
+                placeholder="password"
+              ></input>
+            </div>
+            <button>확 인</button>
+          </ProfileUpdateWrap>
+        </ProfileUpdateModal>
         <SignUpModal
           isSignUpModal={isSignUpModal}
           setIsSignUpModal={setIsSignUpModal}
@@ -59,6 +131,8 @@ const MainPage = () => {
             onClickModal(isSignInModal, setIsSignInModal)
           }
           openSignUpModal={openSignUpModal}
+          isLoggedIn={isLoggedIn}
+          setIsLoggedIn={setIsLoggedIn}
         />
       </MainWrap>
     </>
@@ -153,5 +227,152 @@ const LoginButton = styled.button`
   &:active {
     box-shadow: none;
     transform: translateY(0);
+  }
+`;
+
+const LogoutButton = styled.button`
+  padding: 10px 25px;
+
+  background-color: rgba(0, 0, 0, 0.4);
+  box-shadow:
+    inset 0px -12px 26px rgba(0, 0, 0, 0.05),
+    2px 3px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 14px;
+
+  color: #fff;
+  font-weight: bold;
+  font-size: 22px;
+
+  border: 0;
+
+  cursor: pointer;
+  transition: 0.2s;
+
+  &:hover {
+    background-color: #666;
+    transform: translateY(-2px);
+  }
+  &:active {
+    box-shadow: none;
+    transform: translateY(0);
+  }
+`;
+
+const ProfileUpdateModal = styled.div`
+  display: ${(props) => (props.isProfileUpdate ? "block" : "none")};
+
+  position: fixed;
+
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  transform: translate(-50%, -50%);
+
+  width: 500px;
+  height: 550px;
+
+  background: #fff;
+  box-shadow:
+    rgba(14, 30, 37, 0.1) 0px 2px 4px 0px,
+    rgba(14, 30, 37, 0.2) 0px 2px 16px 0px;
+
+  border-radius: 24px;
+
+  animation: modal 0.5s ease;
+  @keyframes modal {
+    from {
+      transform: translate(-50%, -62%);
+    }
+    to {
+      transform: translate(-50%, -50%);
+    }
+  }
+`;
+
+const ProfileUpdateWrap = styled.section`
+  margin: 100px 50px 0 50px;
+
+  text-align: center;
+
+  h2 {
+    margin-bottom: 60px;
+  }
+  div {
+    display: flex;
+    justify-content: space-between;
+
+    margin: 40px auto;
+
+    width: 400px;
+  }
+  label {
+    font-size: 14px;
+    span {
+      color: red;
+    }
+  }
+  input {
+    padding: 0 3px;
+
+    box-sizing: border-box;
+    border-bottom: 1px solid #bed9e3;
+
+    &:focus {
+      outline: none;
+      box-shadow: rgba(0, 0, 0, 0.1) 0px 3px 5px;
+    }
+  }
+  button {
+    margin-top: 24px;
+    padding: 4px;
+
+    width: 100%;
+
+    background-color: rgba(0, 0, 0, 0.4);
+    box-shadow:
+      inset 0px -12px 26px rgba(0, 0, 0, 0.05),
+      2px 3px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 14px;
+
+    color: #fff;
+    font-weight: bold;
+    font-size: 22px;
+
+    border: 0;
+
+    cursor: pointer;
+    transition: 0.2s;
+
+    &:hover {
+      background-color: #666;
+    }
+    &:active {
+      box-shadow: none;
+    }
+  }
+`;
+
+const ModalCloseButton = styled.img`
+  position: absolute;
+  right: 0;
+  top: 0;
+
+  margin: 33px;
+
+  width: 22px;
+
+  cursor: pointer;
+
+  &:hover {
+    animation: close 0.3s ease;
+
+    @keyframes close {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(90deg);
+      }
+    }
   }
 `;

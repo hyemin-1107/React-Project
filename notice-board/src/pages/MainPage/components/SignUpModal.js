@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import axios from "axios";
 import ico_close from "../../../images/ico_close.png";
+import axiosInstance from "../../../services/axiosInstance";
 
 const SignUpModal = (props) => {
   const [userData, setUserData] = useState({
@@ -34,33 +34,35 @@ const SignUpModal = (props) => {
   const { userId, birth, userPw, confirmPassword } = userData;
   const passwordCheck = userPw === confirmPassword;
 
-  const handleSignUpButton = () => {
-    if (
-      userId !== "" &&
-      birth !== "" &&
-      userPw !== "" &&
-      passwordCheck === true
-    ) {
-      axios
-        .post("백엔드주소", {
+  const handleSignUpButton = async () => {
+    try {
+      if (
+        userId !== "" &&
+        birth !== "" &&
+        userPw !== "" &&
+        passwordCheck === true
+      ) {
+        const res = await axiosInstance.post("/user/signup", {
           userId: userId,
           userPw: userPw,
           birth: birth,
-        })
-        //비동기 작업이 성공적으로 완료되면 실행되는 콜백 함수
-        .then((res) => {
-          console.log(res.data);
-          if (res.data.code === 200) {
-            alert("가입이 완료되었습니다.");
-            setIsSignUpModal(false);
-          } else if (res.data.code === 500) {
-            alert("중복된 이름입니다.");
-          }
         });
-    } else if (userId !== "" && birth !== "" && passwordCheck === false) {
-      alert("비밀번호가 일치하지 않습니다.");
-    } else {
-      alert("작성을 완료해주세요.");
+
+        console.log(res.data);
+        if (res.data.code === 200) {
+          alert("가입이 완료되었습니다.");
+          setIsSignUpModal(false);
+        } else if (res.data.code === 500) {
+          alert("중복된 이름입니다.");
+        }
+      } else if (userId !== "" && birth !== "" && passwordCheck === false) {
+        alert("비밀번호가 일치하지 않습니다.");
+      } else {
+        alert("작성을 완료해주세요.");
+      }
+    } catch (error) {
+      console.error("가입에 실패했습니다:", error);
+      alert("가입에 실패했습니다.");
     }
   };
 

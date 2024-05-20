@@ -1,15 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import axios from "axios";
 import ico_close from "../../../images/ico_close.png";
+import axiosInstance from "../../../services/axiosInstance";
 
 const SignInModal = (props) => {
   const [userData, setUserData] = useState({
     userId: "",
     userPw: "",
   });
-  const { isSignInModal, onClickCloseButton, openSignUpModal } = props;
+
+  const { isSignInModal, onClickCloseButton, openSignUpModal, setIsLoggedIn } =
+    props;
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -28,14 +30,16 @@ const SignInModal = (props) => {
     }
     // 요청 보내기 전에 userData 확인 데이터
     console.log("로그인 요청 전:", userData);
-    axios.post("백엔드주소", userData).then((res) => {
+    try {
+      const res = await axiosInstance.post("/user/", userData);
       console.log("로그인 응답:", res.data);
 
-      const { token } = res.data;
+      const token = res.data.token;
       localStorage.setItem("token", token);
 
       if (res.data.code === 200) {
         alert("로그인 성공!");
+        setIsLoggedIn(true);
         navigate("/notice-board");
       } else if (res.data.code === 401) {
         alert("아이디 또는 비밀번호가 잘못되었습니다.");
@@ -44,21 +48,10 @@ const SignInModal = (props) => {
       } else {
         alert("서버에 에러가 발생했습니다.");
       }
-    });
-    // .catch((error) => {
-    //   if (error.response) {
-    //     //status HTTP상태코드
-    //     if (error.response.code === 401) {
-    //       alert("아이디 또는 비밀번호가 잘못되었습니다.");
-    //     } else if (error.response.code === 500) {
-    //       alert("서버에 에러가 발생했습니다.");
-    //     } else {
-    //       alert("서버에 에러가 발생했습니다.");
-    //     }
-    //   } else {
-    //     alert("에러가 발생했습니다.");
-    //   }
-    // });
+    } catch (error) {
+      console.error("에러가 발생했습니다:", error);
+      alert("에러가 발생했습니다.");
+    }
   };
 
   return (
@@ -70,7 +63,7 @@ const SignInModal = (props) => {
       />
       <LoginWrap>
         <LoginTitle>Sign In</LoginTitle>
-        <form>
+        <form onSubmit={handleLoginButton}>
           <LoginInputWrap>
             <LoginInput
               type="text"
@@ -87,10 +80,8 @@ const SignInModal = (props) => {
               onChange={handleInputChange}
             />
           </LoginInputWrap>
+          <LoginSignInButton type="submit">Sign In</LoginSignInButton>
         </form>
-        <LoginSignInButton type="submit" onClick={handleLoginButton}>
-          Sign In
-        </LoginSignInButton>
         <LoginSignUp>
           <LoginSignUpText>회원이 아니신가요?</LoginSignUpText>
           <LoginSignUpButton onClick={openSignUpModal}>

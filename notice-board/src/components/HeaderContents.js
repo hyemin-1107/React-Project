@@ -8,10 +8,13 @@ const HeaderContents = () => {
   const navigateToBoard = () => {
     navigate("/notice-board");
   };
+  const navigateToMain = () => {
+    navigate("/");
+  };
   return (
     <Header>
       <HeaderWrap>
-        <Logo>
+        <Logo onClick={navigateToMain}>
           <LogoIco src={ico_sun} />
           <div>Daily Record</div>
         </Logo>
@@ -28,6 +31,8 @@ const HeaderContents = () => {
 export default HeaderContents;
 
 const Header = styled.header`
+  display: flex;
+  justify-content: center;
   height: 80px;
 
   background-color: #fff;
@@ -42,9 +47,10 @@ const HeaderWrap = styled.div`
   display: flex;
   justify-content: space-between;
 
-  margin: 0 290px;
-
+  width: 1000px;
   height: 80px;
+
+  cursor: pointer;
 `;
 
 const Logo = styled.h1`
@@ -69,7 +75,7 @@ const Nav = styled.nav`
   ul {
     display: flex;
 
-    margin-right: 40px;
+    margin-right: 20px;
 
     font-size: 33px;
     font-weight: 600;
