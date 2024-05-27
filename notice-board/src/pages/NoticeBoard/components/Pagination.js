@@ -5,27 +5,42 @@ const Pagination = (props) => {
   const { onChangePage, page, totalPages } = props;
 
   const handlePrevClick = () => {
-    onChangePage(page - 1);
+    if (page > 1) onChangePage(page - 1);
   };
 
   const handleNextClick = () => {
-    onChangePage(page + 1);
+    if (page < totalPages) onChangePage(page + 1);
   };
 
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    let startPage = 1;
+    let endPage = 5; // 페이지 범위를 5까지로 설정
+
+    if (page > 5) {
+      startPage = page - 4;
+      endPage = page;
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(
+        <PageButton
+          key={i}
+          onClick={() => onChangePage(i)}
+          isSelected={page === i}
+        >
+          {i}
+        </PageButton>,
+      );
+    }
+    return pageNumbers;
+  };
   return (
     <ButtonContent>
       <NextPrevButton onClick={handlePrevClick} disabled={page === 1}>
         이전
       </NextPrevButton>
-      {ButtonArray.map((el) => (
-        <PageButton
-          key={el.id}
-          onClick={() => onChangePage(el.id)}
-          isSelected={page === el.id}
-        >
-          {el.id}
-        </PageButton>
-      ))}
+      {renderPageNumbers()}
       <NextPrevButton onClick={handleNextClick} disabled={page === totalPages}>
         다음
       </NextPrevButton>
@@ -96,20 +111,20 @@ const NextPrevButton = styled.button`
   }
 `;
 
-const ButtonArray = [
-  {
-    id: 1,
-  },
-  {
-    id: 2,
-  },
-  {
-    id: 3,
-  },
-  {
-    id: 4,
-  },
-  {
-    id: 5,
-  },
-];
+// const ButtonArray = [
+//   {
+//     id: 1,
+//   },
+//   {
+//     id: 2,
+//   },
+//   {
+//     id: 3,
+//   },
+//   {
+//     id: 4,
+//   },
+//   {
+//     id: 5,
+//   },
+// ];

@@ -1,27 +1,52 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { onClickModal } from "../../utills/onClickModal";
-import { format } from "date-fns";
+// import { format } from "date-fns";
 import HeaderContents from "../../components/HeaderContents";
 import BoardDetailView from "./components/BoardDetailView";
 import Pagination from "./components/Pagination";
-import img_photo from "../../images/img_photo.jpg";
+import axiosInstance from "../../services/axiosInstance";
 
-const NoticeBoard = (props) => {
+const NoticeBoard = () => {
   const [isBoardDetailModal, setIsBoardDetailModal] = useState(false);
+  const [boardList, setBoardList] = useState([]);
   const [page, setPage] = useState(1);
-  const { totalPages } = props;
+  const [totalPages, setTotalPages] = useState(1);
+
   const navigate = useNavigate();
+  const location = useLocation();
   const navigateToCreateBoard = () => {
     navigate("/create-board");
   };
 
-  const currentDate = new Date();
-  const formattedDate = format(currentDate, "yyyy-MM-dd");
+  // const currentDate = new Date();
+  // const formattedDate = format(currentDate, "yyyy-MM-dd");
   const onChangePage = (value) => {
     setPage(value);
   };
+
+  const BoardList = async (page) => {
+    try {
+      const response = await axiosInstance.get(
+        `/board/list?page=${page}&limit=6`,
+      );
+      if (response.data.result === "success") setBoardList(response.data.data); // 서버에서 받은 데이터로 게시판 리스트 업데이트
+      setTotalPages(response.data.totalPages);
+    } catch (error) {
+      console.error("게시판 리스트를 가져오는데 실패했습니다:", error);
+    }
+  };
+  useEffect(() => {
+    BoardList(page);
+  }, [page]);
+
+  useEffect(() => {
+    const query = new URLSearchParams(location.search);
+    if (query.get("reload") === "true") {
+      BoardList(page);
+    } // 페이지 로드될 때 게시판 리스트 가져오기
+  }, [location.search, page]);
 
   return (
     <>
@@ -34,74 +59,19 @@ const NoticeBoard = (props) => {
         }
       />
       <BoardContainer>
-        {/* TODO 입력함수 가데이터 사용 */}
-        <Section
-          onClick={() =>
-            onClickModal(isBoardDetailModal, setIsBoardDetailModal)
-          }
-        >
-          <BoardImg src={img_photo} alt="첨부이미지" />
-          <UserBoardContainer>
-            <h2>제목</h2>
-            <p>작성자</p>
-            <span>{formattedDate}</span>
-          </UserBoardContainer>
-        </Section>
-        <Section
-          onClick={() =>
-            onClickModal(isBoardDetailModal, setIsBoardDetailModal)
-          }
-        >
-          <BoardImg src={img_photo} alt="" />
-          <UserBoardContainer>
-            <h2>제목</h2>
-            <p>작성자</p>
-          </UserBoardContainer>
-        </Section>
-        <Section
-          onClick={() =>
-            onClickModal(isBoardDetailModal, setIsBoardDetailModal)
-          }
-        >
-          <BoardImg src={img_photo} alt="" />
-          <UserBoardContainer>
-            <h2>제목</h2>
-            <p>작성자</p>
-          </UserBoardContainer>
-        </Section>
-        <Section
-          onClick={() =>
-            onClickModal(isBoardDetailModal, setIsBoardDetailModal)
-          }
-        >
-          <BoardImg src={img_photo} alt="" />
-          <UserBoardContainer>
-            <h2>제목</h2>
-            <p>작성자</p>
-          </UserBoardContainer>
-        </Section>
-        <Section
-          onClick={() =>
-            onClickModal(isBoardDetailModal, setIsBoardDetailModal)
-          }
-        >
-          <BoardImg src={img_photo} alt="" />
-          <UserBoardContainer>
-            <h2>제목</h2>
-            <p>작성자</p>
-          </UserBoardContainer>
-        </Section>
-        <Section
-          onClick={() =>
-            onClickModal(isBoardDetailModal, setIsBoardDetailModal)
-          }
-        >
-          <BoardImg src={img_photo} alt="" />
-          <UserBoardContainer>
-            <h2>제목</h2>
-            <p>작성자</p>
-          </UserBoardContainer>
-        </Section>
+        {boardList.map((board) => (
+          <Section
+            key={board.boardId}
+            onClick={() => setIsBoardDetailModal(true)}
+          >
+            <BoardImg src={board.imagePath} alt="첨부이미지" />
+            <UserBoardContainer>
+              <h2>{board.boardTitle}</h2>
+              <p>{board.userId}</p>
+              <span>{new Date(board.createAt).toLocaleDateString()}</span>
+            </UserBoardContainer>
+          </Section>
+        ))}
       </BoardContainer>
       <CreateButtonWrap>
         <Pagination

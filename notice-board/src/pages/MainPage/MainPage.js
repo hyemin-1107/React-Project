@@ -8,12 +8,19 @@ import ico_comment from "../../images/ico_comment.png";
 import ico_plane from "../../images/ico_plane.png";
 import ico_close from "../../images/ico_close.png";
 import HeaderContents from "../../components/HeaderContents";
+import axiosInstance from "../../services/axiosInstance";
 
 const MainPage = () => {
   const [isSignUpModal, setIsSignUpModal] = useState(false);
   const [isSignInModal, setIsSignInModal] = useState(false);
   const [isProfileUpdate, setIsProfileUpdate] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [passwordData, setPasswordData] = useState({
+    userPw: "",
+    newUserPw: "",
+    confirmUserPw: "",
+  });
+
   const openSignUpModal = () => {
     setIsSignUpModal(true);
     setIsSignInModal(false);
@@ -30,6 +37,34 @@ const MainPage = () => {
   const handleLogout = () => {
     localStorage.removeItem("token"); // 토큰 삭제
     setIsLoggedIn(false);
+  };
+
+  const handleChangePasswordInput = (e) => {
+    const { name, value } = e.target;
+    setPasswordData({
+      ...passwordData,
+      [name]: value,
+    });
+  };
+
+  const handlePasswordChange = async () => {
+    const { userPw, newUserPw } = passwordData;
+    try {
+      const res = await axiosInstance.put("/user/", {
+        userPw: userPw,
+        newUserPw: newUserPw,
+      });
+      console.log(res.data);
+      if (res.data.code === 200) {
+        alert("비밀번호가 변경되었습니다.");
+        setIsProfileUpdate(false);
+      } else {
+        alert(res.data.message);
+      }
+    } catch (error) {
+      console.error("비밀번호 변경 실패:", error);
+      alert("비밀번호 변경 실패: " + error.message);
+    }
   };
 
   return (
@@ -91,6 +126,8 @@ const MainPage = () => {
                 id="userPw"
                 name="userPw"
                 placeholder="password"
+                value={passwordData.userPw}
+                onChange={handleChangePasswordInput}
               ></input>
             </div>
             <div>
@@ -101,21 +138,25 @@ const MainPage = () => {
                 type="password"
                 id="newUserPw"
                 name="newUserPw"
-                placeholder="password"
+                placeholder="new password"
+                value={passwordData.newUserPw}
+                onChange={handleChangePasswordInput}
               ></input>
             </div>
             <div>
-              <label htmlFor="newUserPw">
+              <label htmlFor="confirmUserPw">
                 한번 더 입력해주세요.<span>*</span>
               </label>
               <input
                 type="password"
-                id="newUserPw"
-                name="newUserPw"
-                placeholder="password"
+                id="confirmUserPw"
+                name="confirmUserPw"
+                placeholder="new password"
+                value={passwordData.confirmUserPw}
+                onChange={handleChangePasswordInput}
               ></input>
             </div>
-            <button>확 인</button>
+            <button onClick={handlePasswordChange}>확 인</button>
           </ProfileUpdateWrap>
         </ProfileUpdateModal>
         <SignUpModal

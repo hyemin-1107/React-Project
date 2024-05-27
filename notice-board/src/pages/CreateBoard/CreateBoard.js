@@ -2,15 +2,24 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import HeaderContents from "../../components/HeaderContents";
+import axiosInstance from "../../services/axiosInstance";
 
 const CreateBoard = () => {
   const [formData, setFormData] = useState({
-    title: "",
-    content: "",
-    selectedFile: null,
+    userId: "",
+    boardTitle: "",
+    boardDetail: "",
+    imageSrc: {
+      title: "",
+      src: "",
+    },
     previewURL: null,
   });
-  const { title, content, selectedFile, previewURL } = formData;
+  const {
+    boardTitle,
+    boardDetail,
+    imageSrc: { src: previewURL },
+  } = formData;
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -24,7 +33,10 @@ const CreateBoard = () => {
     reader.onloadend = () => {
       setFormData({
         ...formData,
-        selectedFile: file, // 파일 객체를 상태에 설정
+        imageSrc: {
+          title: file.name,
+          src: reader.result,
+        },
         previewURL: reader.result,
       });
     };
@@ -36,22 +48,24 @@ const CreateBoard = () => {
   const handleCancelButton = () => {
     navigate("/notice-board");
   };
-  const inputCompleteButton = () => {
-    if (title !== "" && content !== "" && selectedFile !== null) {
-      alert("작성이 완료되었습니다.");
-      navigate("/notice-board");
-    } else if (title !== "" && content !== "") {
-      alert("이미지를 첨부해주세요");
-    } else {
-      alert("작성을 완료해주세요");
+
+  const inputCompleteButton = async () => {
+    const { boardTitle, boardDetail, imageSrc } = formData;
+    try {
+      if (boardTitle !== "" && boardDetail !== "" && imageSrc.src !== "") {
+        await axiosInstance.post("/board/", formData);
+        alert("작성이 완료되었습니다.");
+        navigate("/notice-board?reload=true");
+      } else if (boardTitle === "" || boardDetail === "") {
+        alert("모든 필드를 입력해주세요.");
+      } else {
+        alert("이미지를 첨부해주세요.");
+      }
+    } catch (error) {
+      console.error("게시물 작성 실패", error);
+      alert("게시물 작성에 실패했습니다.");
     }
   };
-  const createBoardSubmit = (e) => {
-    e.preventDefault();
-    //   폼 제출의 기본 동작인 페이지 새로고침을 막음
-    //   폼 데이터를 처리하고 다른 작업을 수행하는 코드를 추가
-  };
-
   // 토큰 가져오기
   const token = localStorage.getItem("token");
 
@@ -68,31 +82,31 @@ const CreateBoard = () => {
       <CreateBoardContainer>
         <CreateBoardWrap>
           {/* form 요소에서 발생하는 이벤트 중 하나. 사용자가 폼을 제출할 때 발생 */}
-          <form onSubmit={createBoardSubmit}>
+          <form>
             <InputField
               type="text"
-              id="title"
-              name="title"
-              placeholder="제목을 입력하세요"
-              value={formData.title}
+              id="boardTitle"
+              name="boardTitle"
+              placeholder="게시글 제목"
+              value={boardTitle}
               onChange={handleInputChange}
             />
             <PreviewImgContents>
               {previewURL && <img src={previewURL} alt="" />}
             </PreviewImgContents>
             <TextareaField
-              id="content"
-              name="content"
-              placeholder="내용을 입력하세요"
-              value={formData.content}
+              id="boardDetail"
+              name="boardDetail"
+              placeholder="게시글 내용"
+              value={boardDetail}
               onChange={handleInputChange}
             />
             <input
               type="file"
               style={{ marginTop: "10px" }}
               accept="image/*"
-              id="selectedFile"
-              name="selectedFile"
+              id="imageSrc"
+              name="imageSrc"
               onChange={handleFileChange}
             />
           </form>
