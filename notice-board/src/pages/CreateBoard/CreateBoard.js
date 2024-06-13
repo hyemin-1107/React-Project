@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import HeaderContents from "../../components/HeaderContents";
-import axiosInstance from "../../services/axiosInstance";
+import { createBoard } from "../../api/CreateBoardApi";
 
 const CreateBoard = () => {
-  const [formData, setFormData] = useState({
+  const [formUserData, setFormUserData] = useState({
     userId: "",
     boardTitle: "",
     boardDetail: "",
@@ -19,11 +19,11 @@ const CreateBoard = () => {
     boardTitle,
     boardDetail,
     imageSrc: { src: previewURL },
-  } = formData;
+  } = formUserData;
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormUserData({
+      ...formUserData,
       [name]: value,
     });
   };
@@ -31,8 +31,8 @@ const CreateBoard = () => {
     const file = e.target.files[0];
     const reader = new FileReader(); // 미리보기 생성
     reader.onloadend = () => {
-      setFormData({
-        ...formData,
+      setFormUserData({
+        ...formUserData,
         imageSrc: {
           title: file.name,
           src: reader.result,
@@ -50,12 +50,12 @@ const CreateBoard = () => {
   };
 
   const inputCompleteButton = async () => {
-    const { boardTitle, boardDetail, imageSrc } = formData;
+    const { boardTitle, boardDetail, imageSrc } = formUserData;
     try {
       if (boardTitle !== "" && boardDetail !== "" && imageSrc.src !== "") {
-        await axiosInstance.post("/board/", formData);
+        await createBoard(formUserData); // API 호출
         alert("작성이 완료되었습니다.");
-        navigate("/notice-board?reload=true");
+        navigate("/notice-board", { state: { reload: true } });
       } else if (boardTitle === "" || boardDetail === "") {
         alert("모든 필드를 입력해주세요.");
       } else {
@@ -66,22 +66,21 @@ const CreateBoard = () => {
       alert("게시물 작성에 실패했습니다.");
     }
   };
-  // 토큰 가져오기
-  const token = localStorage.getItem("token");
 
+  // 토큰 가져오기
   useEffect(() => {
+    const token = localStorage.getItem("token");
     if (!token) {
       navigate("/");
       alert("로그인 후 이용해주세요");
     }
-  });
+  }, [navigate]);
 
   return (
     <>
       <HeaderContents />
       <CreateBoardContainer>
         <CreateBoardWrap>
-          {/* form 요소에서 발생하는 이벤트 중 하나. 사용자가 폼을 제출할 때 발생 */}
           <form>
             <InputField
               type="text"

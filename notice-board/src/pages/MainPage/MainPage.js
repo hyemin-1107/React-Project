@@ -8,7 +8,8 @@ import ico_comment from "../../images/ico_comment.png";
 import ico_plane from "../../images/ico_plane.png";
 import ico_close from "../../images/ico_close.png";
 import HeaderContents from "../../components/HeaderContents";
-import axiosInstance from "../../services/axiosInstance";
+// import axiosInstance from "../../services/axiosInstance";
+import { changePassword } from "../../api/PasswordChangeApi";
 
 const MainPage = () => {
   const [isSignUpModal, setIsSignUpModal] = useState(false);
@@ -48,22 +49,17 @@ const MainPage = () => {
   };
 
   const handlePasswordChange = async () => {
-    const { userPw, newUserPw } = passwordData;
     try {
-      const res = await axiosInstance.put("/user/", {
-        userPw: userPw,
-        newUserPw: newUserPw,
-      });
-      console.log(res.data);
-      if (res.data.code === 200) {
+      const res = await changePassword(passwordData);
+      console.log(res);
+      if (res.code === 200) {
         alert("비밀번호가 변경되었습니다.");
         setIsProfileUpdate(false);
       } else {
-        alert(res.data.message);
+        alert(res.message);
       }
     } catch (error) {
-      console.error("비밀번호 변경 실패:", error);
-      alert("비밀번호 변경 실패: " + error.message);
+      alert(error.message);
     }
   };
 

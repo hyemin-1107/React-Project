@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import ico_close from "../../../images/ico_close.png";
-import axiosInstance from "../../../services/axiosInstance";
+import { signIn } from "../../../api/SignInApi";
 
 const SignInModal = (props) => {
   const [userData, setUserData] = useState({
@@ -31,7 +31,7 @@ const SignInModal = (props) => {
     // 요청 보내기 전에 userData 확인 데이터
     console.log("로그인 요청 전:", userData);
     try {
-      const res = await axiosInstance.post("/user/", userData);
+      const res = await signIn(userData);
       console.log("로그인 응답:", res.data);
 
       const token = res.data.token;

@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { onClickModal } from "../../utills/onClickModal";
-// import { format } from "date-fns";
+import { format } from "date-fns";
 import HeaderContents from "../../components/HeaderContents";
 import BoardDetailView from "./components/BoardDetailView";
 import Pagination from "./components/Pagination";
-import axiosInstance from "../../services/axiosInstance";
+import { fetchBoardList } from "../../api/BoardListApi";
 
 const NoticeBoard = () => {
   const [isBoardDetailModal, setIsBoardDetailModal] = useState(false);
@@ -16,37 +16,41 @@ const NoticeBoard = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
+
   const navigateToCreateBoard = () => {
     navigate("/create-board");
   };
 
-  // const currentDate = new Date();
-  // const formattedDate = format(currentDate, "yyyy-MM-dd");
+  const formattedDate = (dateString) => {
+    const date = new Date(dateString);
+    return format(date, "yyyy-MM-dd");
+  };
+
   const onChangePage = (value) => {
     setPage(value);
   };
 
   const BoardList = async (page) => {
     try {
-      const response = await axiosInstance.get(
-        `/board/list?page=${page}&limit=6`,
-      );
-      if (response.data.result === "success") setBoardList(response.data.data); // 서버에서 받은 데이터로 게시판 리스트 업데이트
-      setTotalPages(response.data.totalPages);
+      const { boardList, totalPages } = await fetchBoardList(page);
+      setBoardList(boardList);
+      setTotalPages(totalPages);
     } catch (error) {
       console.error("게시판 리스트를 가져오는데 실패했습니다:", error);
     }
   };
+
   useEffect(() => {
     BoardList(page);
   }, [page]);
 
   useEffect(() => {
-    const query = new URLSearchParams(location.search);
-    if (query.get("reload") === "true") {
+    if (location.state?.reload) {
       BoardList(page);
-    } // 페이지 로드될 때 게시판 리스트 가져오기
-  }, [location.search, page]);
+      // location.state를 초기화하여 재렌더링을 방지
+      navigate("/notice-board", { state: {} });
+    }
+  }, [location.state?.reload, page, navigate]);
 
   return (
     <>
@@ -68,7 +72,7 @@ const NoticeBoard = () => {
             <UserBoardContainer>
               <h2>{board.boardTitle}</h2>
               <p>{board.userId}</p>
-              <span>{new Date(board.createAt).toLocaleDateString()}</span>
+              <span>{formattedDate(board.createAt)}</span>
             </UserBoardContainer>
           </Section>
         ))}

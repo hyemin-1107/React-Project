@@ -111,7 +111,7 @@ const NextPrevButton = styled.button`
   }
 `;
 
-// const ButtonArray = [
+// const BUTTON_ARRAY = [
 //   {
 //     id: 1,
 //   },

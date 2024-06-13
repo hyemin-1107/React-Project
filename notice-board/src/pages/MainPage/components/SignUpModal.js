@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import ico_close from "../../../images/ico_close.png";
-import axiosInstance from "../../../services/axiosInstance";
+import { signUp } from "../../../api/SignUpApi";
 
 const SignUpModal = (props) => {
   const [userData, setUserData] = useState({
@@ -42,11 +42,13 @@ const SignUpModal = (props) => {
         userPw !== "" &&
         passwordCheck === true
       ) {
-        const res = await axiosInstance.post("/user/signup", {
+        const userDataForApi = {
           userId: userId,
           userPw: userPw,
           birth: birth,
-        });
+        };
+
+        const res = await signUp(userDataForApi);
 
         console.log(res.data);
         if (res.data.code === 200) {
