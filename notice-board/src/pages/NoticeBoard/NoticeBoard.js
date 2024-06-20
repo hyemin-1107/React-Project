@@ -7,9 +7,11 @@ import HeaderContents from "../../components/HeaderContents";
 import BoardDetailView from "./components/BoardDetailView";
 import Pagination from "./components/Pagination";
 import { fetchBoardList } from "../../api/BoardListApi";
+import { fetchBoardDetail } from "../../api/BoardDetailApi";
 
 const NoticeBoard = () => {
   const [isBoardDetailModal, setIsBoardDetailModal] = useState(false);
+  const [selectedBoard, setSelectedBoard] = useState(null);
   const [boardList, setBoardList] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -30,27 +32,35 @@ const NoticeBoard = () => {
     setPage(value);
   };
 
-  const BoardList = async (page) => {
+  const fetchBoard = async () => {
     try {
       const { boardList, totalPages } = await fetchBoardList(page);
       setBoardList(boardList);
       setTotalPages(totalPages);
     } catch (error) {
-      console.error("게시판 리스트를 가져오는데 실패했습니다:", error);
+      console.error("게시판 리스트를 가져오는데 실패했습니다:", error.message);
+      alert(
+        "게시판 목록을 가져오는 도중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.",
+      );
+    }
+  };
+
+  const onBoardClick = async (boardId) => {
+    try {
+      const boardDetail = await fetchBoardDetail(boardId);
+      setSelectedBoard(boardDetail);
+      setIsBoardDetailModal(true);
+    } catch (error) {
+      console.error("게시판 상세 정보를 가져오는데 실패했습니다:", error);
     }
   };
 
   useEffect(() => {
-    BoardList(page);
-  }, [page]);
-
-  useEffect(() => {
+    fetchBoard();
     if (location.state?.reload) {
-      BoardList(page);
-      // location.state를 초기화하여 재렌더링을 방지
-      navigate("/notice-board", { state: {} });
+      fetchBoard(); // 페이지 재로딩 시 게시판 데이터 다시 불러오기
     }
-  }, [location.state?.reload, page, navigate]);
+  }, [page, location.state?.reload]);
 
   return (
     <>
@@ -58,21 +68,22 @@ const NoticeBoard = () => {
       <BoardDetailView
         isBoardDetailModal={isBoardDetailModal}
         setIsBoardDetailModal={setIsBoardDetailModal}
+        selectedBoard={selectedBoard}
         onClickCloseButton={() =>
           onClickModal(isBoardDetailModal, setIsBoardDetailModal)
         }
       />
       <BoardContainer>
-        {boardList.map((board) => (
+        {boardList.map((boardList) => (
           <Section
-            key={board.boardId}
-            onClick={() => setIsBoardDetailModal(true)}
+            key={boardList.boardId}
+            onClick={() => onBoardClick(boardList.boardId)}
           >
-            <BoardImg src={board.imagePath} alt="첨부이미지" />
+            <BoardImg src={boardList.imagePath} alt="첨부이미지" />
             <UserBoardContainer>
-              <h2>{board.boardTitle}</h2>
-              <p>{board.userId}</p>
-              <span>{formattedDate(board.createAt)}</span>
+              <h2>{boardList.boardTitle}</h2>
+              <p>{boardList.userId}</p>
+              <span>{formattedDate(boardList.createAt)}</span>
             </UserBoardContainer>
           </Section>
         ))}

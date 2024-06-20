@@ -1,39 +1,73 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import img_photo from "../../../images/img_photo.jpg";
+import {
+  fetchBoardDetail,
+  fetchComments,
+  postComment,
+  updateComment,
+  deleteComment,
+} from "../../../api/BoardDetailApi";
 import ico_close from "../../../images/ico_close.png";
 
 const BoardDetailView = (props) => {
+  const [boardDetail, setBoardDetail] = useState({});
+  const [comments, setComments] = useState([]);
   const [inputComment, setInputComment] = useState("");
-  const { isBoardDetailModal, onClickCloseButton } = props;
+  const { boardId, isBoardDetailModal, onClickCloseButton } = props;
+
+  useEffect(() => {
+    const loadBoardDetail = async () => {
+      try {
+        const data = await fetchBoardDetail(boardId);
+        setBoardDetail(data);
+        setComments(data.comments);
+      } catch (error) {
+        console.error("게시판 상세 정보를 불러오는데 실패했습니다.", error);
+      }
+    };
+    if (isBoardDetailModal) {
+      loadBoardDetail();
+    }
+  }, [boardId, isBoardDetailModal]);
+
+  const handlePostComment = async () => {
+    try {
+      await postComment(boardId, inputComment);
+      const updatedComments = await fetchComments(boardId);
+      setComments(updatedComments);
+      setInputComment("");
+    } catch (error) {
+      console.error("댓글 작성에 실패했습니다.", error);
+    }
+  };
 
   const InputComment = (e) => {
-    const { value } = e.target;
-
-    setInputComment(value);
+    setInputComment(e.target.value);
   };
+
   return (
     <Wrap isBoardDetailModal={isBoardDetailModal}>
       <BoardDetailViewContainer>
         <BoardDetailViewWrap>
           <BoardDetailViewHeader>
-            <h2>제목</h2>
+            <h2>{boardDetail.boardTitle}</h2>
           </BoardDetailViewHeader>
           <CloseButton src={ico_close} alt="" onClick={onClickCloseButton} />
           <BoardDetailViewUserDate>
-            <div>작성자</div>
-            <div>날짜</div>
+            <div>{boardDetail.userId}</div>
+            <div>{new Date(boardDetail.createAt).toLocaleDateString()}</div>
           </BoardDetailViewUserDate>
-          <BoardImg src={img_photo} alt="" />
-          <p>dd</p>
+          <BoardImg src={boardDetail.imagePath} alt="" />
+          <p>{boardDetail.boardDetail}</p>
           <CommentContainer>
             <input
               onChange={InputComment}
               value={inputComment}
               placeholder="Add a comment..."
             />
-            <button>POST</button>
+            <button onClick={handlePostComment}>POST</button>
           </CommentContainer>
+          {/*  */}
         </BoardDetailViewWrap>
       </BoardDetailViewContainer>
     </Wrap>
@@ -47,10 +81,8 @@ const Wrap = styled.div`
   position: fixed;
   top: 0;
   left: 0;
-
   width: 100%;
   height: 100%;
-
   background-color: rgba(0, 0, 0, 0.3);
 `;
 
@@ -66,23 +98,20 @@ const BoardDetailViewHeader = styled.header`
     border-bottom: 2px solid rgba(0, 0, 0, 0.1);
   }
 `;
+
 const BoardDetailViewContainer = styled.section`
   position: fixed;
   top: 52%;
   left: 50%;
   z-index: 1;
-
   width: 805px;
-
   background: #fff;
   border-radius: 24px;
   padding: 30px 20px;
-
   box-shadow:
     rgba(14, 30, 37, 0.1) 0px 2px 4px 0px,
     rgba(14, 30, 37, 0.2) 0px 2px 16px 0px;
   box-sizing: border-box;
-
   transform: translate(-50%, -50%);
   animation: modal 0.5s ease;
   @keyframes modal {
@@ -105,7 +134,6 @@ const BoardDetailViewWrap = styled.div`
   &::-webkit-scrollbar {
     width: 8px;
   }
-
   &::-webkit-scrollbar-thumb {
     background: #bed9e3;
   }
@@ -120,16 +148,12 @@ const CloseButton = styled.img`
   position: absolute;
   right: 0;
   top: 0;
-
   margin: 19px 20px;
   padding: 20px;
   width: 22px;
-
   cursor: pointer;
-
   &:hover {
     animation: close 0.3s ease;
-
     @keyframes close {
       0% {
         transform: rotate(0deg);
@@ -144,7 +168,6 @@ const CloseButton = styled.img`
 const BoardDetailViewUserDate = styled.div`
   display: flex;
   justify-content: space-between;
-
   margin: 62px 30px 0px 16px;
 `;
 
@@ -155,12 +178,9 @@ const CommentContainer = styled.div`
   input {
     box-sizing: border-box;
     border-bottom: 1px solid #bed9e3;
-
     margin: 26px 0;
     padding: 6px;
-
     width: 83%;
-
     &:focus {
       outline: none;
       box-shadow: rgba(0, 0, 0, 0.1) 0px 3px 5px;
@@ -169,24 +189,40 @@ const CommentContainer = styled.div`
   button {
     margin-left: 22px;
     padding: 6px 20px;
-
     font-size: 16px;
     font-weight: bold;
-
     border: 1px solid #666;
     border-radius: 4px;
     color: white;
     background-color: #66bacf;
-
     box-shadow:
       inset 0px -2px 8px rgba(0, 0, 0, 0.1),
       2px 3px 10px rgba(0, 0, 0, 0.1);
-
     transition: 0.2s;
     cursor: pointer;
-
     &:hover {
       background-color: #3a809b;
     }
+  }
+`;
+
+const CommentList = styled.div`
+  margin-top: 20px;
+`;
+
+const CommentItem = styled.div`
+  border-bottom: 1px solid #eee;
+  padding: 10px 0;
+  p {
+    margin: 0;
+  }
+  small {
+    display: block;
+    margin-top: 5px;
+    color: #999;
+  }
+  button {
+    margin-top: 10px;
+    margin-right: 10px;
   }
 `;

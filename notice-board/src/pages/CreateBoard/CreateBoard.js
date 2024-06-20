@@ -5,7 +5,7 @@ import HeaderContents from "../../components/HeaderContents";
 import { createBoard } from "../../api/CreateBoardApi";
 
 const CreateBoard = () => {
-  const [formUserData, setFormUserData] = useState({
+  const [userInput, setUserInput] = useState({
     userId: "",
     boardTitle: "",
     boardDetail: "",
@@ -19,11 +19,11 @@ const CreateBoard = () => {
     boardTitle,
     boardDetail,
     imageSrc: { src: previewURL },
-  } = formUserData;
+  } = userInput;
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormUserData({
-      ...formUserData,
+    setUserInput({
+      ...userInput,
       [name]: value,
     });
   };
@@ -31,8 +31,8 @@ const CreateBoard = () => {
     const file = e.target.files[0];
     const reader = new FileReader(); // 미리보기 생성
     reader.onloadend = () => {
-      setFormUserData({
-        ...formUserData,
+      setUserInput({
+        ...userInput,
         imageSrc: {
           title: file.name,
           src: reader.result,
@@ -50,16 +50,14 @@ const CreateBoard = () => {
   };
 
   const inputCompleteButton = async () => {
-    const { boardTitle, boardDetail, imageSrc } = formUserData;
     try {
+      const { boardTitle, boardDetail, imageSrc } = userInput;
       if (boardTitle !== "" && boardDetail !== "" && imageSrc.src !== "") {
-        await createBoard(formUserData); // API 호출
+        await createBoard(userInput); // API 호출
         alert("작성이 완료되었습니다.");
-        navigate("/notice-board", { state: { reload: true } });
-      } else if (boardTitle === "" || boardDetail === "") {
-        alert("모든 필드를 입력해주세요.");
+        navigate("/notice-board", { state: { reload: true } }); // 목록 다시 불러오기
       } else {
-        alert("이미지를 첨부해주세요.");
+        alert("모든 필드를 입력하고 이미지를 첨부해주세요.");
       }
     } catch (error) {
       console.error("게시물 작성 실패", error);
@@ -91,10 +89,9 @@ const CreateBoard = () => {
               onChange={handleInputChange}
             />
             <PreviewImgContents>
-              {previewURL && <img src={previewURL} alt="" />}
+              {previewURL && <img src={previewURL} alt="프리뷰 이미지" />}
             </PreviewImgContents>
             <TextareaField
-              id="boardDetail"
               name="boardDetail"
               placeholder="게시글 내용"
               value={boardDetail}
@@ -104,14 +101,13 @@ const CreateBoard = () => {
               type="file"
               style={{ marginTop: "10px" }}
               accept="image/*"
-              id="imageSrc"
               name="imageSrc"
               onChange={handleFileChange}
             />
           </form>
           <CreateBoardButtonContainer>
             <CancelButton onClick={handleCancelButton}>돌아가기</CancelButton>
-            <SubmitButton type="submit" onClick={inputCompleteButton}>
+            <SubmitButton onClick={inputCompleteButton}>
               게시물 작성
             </SubmitButton>
           </CreateBoardButtonContainer>

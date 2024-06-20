@@ -3,17 +3,23 @@ import axiosInstance from "../axios/axiosInstance";
 export const fetchBoardList = async (page) => {
   try {
     const response = await axiosInstance.get(
-      `/board/list?page=${page}&limit=6`,
+      `/board/list?page=${page}&limit=10`,
     );
-    if (response.data.result === "success") {
-      return {
-        boardList: response.data.data,
-        totalPages: response.data.totalPages,
-      };
+    console.log("Response from server:", response);
+    console.log("Response data from server:", response.data);
+    if (response.status === 200) {
+      if (response.data.result === "success") {
+        return {
+          boardList: response.data.data,
+          totalPages: response.data.totalPages,
+        };
+      } else {
+        console.error("Server returned failure result:", response.data.message);
+      }
     } else {
-      console.error("게시판 리스트를 가져오는데 실패했습니다");
+      console.error("Unexpected status code:", response.status);
     }
   } catch (error) {
-    console.error("게시판 리스트를 가져오는데 실패했습니다", error);
+    console.error("Failed to fetch board list:", error.message);
   }
 };
