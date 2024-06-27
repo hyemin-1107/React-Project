@@ -4,7 +4,7 @@ import axiosInstance from "../axios/axiosInstance";
 export const fetchBoardDetail = async (boardId) => {
   try {
     const response = await axiosInstance.get(`/board/${boardId}`);
-    if (response.data.result === "success") {
+    if (response.data.code === 200) {
       return response.data.data;
     } else {
       console.error("게시판 상세 정보를 가져오는데 실패했습니다");
@@ -18,7 +18,7 @@ export const fetchBoardDetail = async (boardId) => {
 export const fetchComments = async (boardId) => {
   try {
     const response = await axiosInstance.get(`/comment/${boardId}`);
-    if (response.data.result === "success") {
+    if (response.data.code === 200) {
       return response.data.data;
     } else {
       console.error("댓글 목록을 가져오는데 실패했습니다");
@@ -29,13 +29,15 @@ export const fetchComments = async (boardId) => {
 };
 
 // 댓글 추가하기
+// 수정필요
+// 코드번호로 if 관리
 export const postComment = async (boardId, comment) => {
   try {
     const response = await axiosInstance.post(`/board/${boardId}/comment`, {
       boardId,
       comment,
     });
-    if (response.data.result === "success") {
+    if (response.data.code === 200) {
       return response.data.data;
     } else {
       console.error("댓글을 추가하는데 실패했습니다");
@@ -51,7 +53,7 @@ export const updateComment = async (commentId, content) => {
     const response = await axiosInstance.put(`/comment/${commentId}`, {
       content,
     });
-    if (response.data.result === "success") {
+    if (response.data.code === 200) {
       return response.data.data;
     } else {
       console.error("댓글을 수정하는데 실패했습니다");
@@ -65,7 +67,7 @@ export const updateComment = async (commentId, content) => {
 export const deleteComment = async (commentId) => {
   try {
     const response = await axiosInstance.delete(`/comment/${commentId}`);
-    if (response.data.result === "success") {
+    if (response.data.code === 200) {
       return true;
     } else {
       console.error("댓글을 삭제하는데 실패했습니다");

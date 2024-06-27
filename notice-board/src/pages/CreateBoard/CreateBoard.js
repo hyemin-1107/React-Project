@@ -15,11 +15,13 @@ const CreateBoard = () => {
     },
     previewURL: null,
   });
+
   const {
     boardTitle,
     boardDetail,
     imageSrc: { src: previewURL },
   } = userInput;
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setUserInput({
@@ -27,6 +29,7 @@ const CreateBoard = () => {
       [name]: value,
     });
   };
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     const reader = new FileReader(); // 미리보기 생성
@@ -44,12 +47,13 @@ const CreateBoard = () => {
       reader.readAsDataURL(file);
     }
   };
+
   const navigate = useNavigate();
   const handleCancelButton = () => {
     navigate("/notice-board");
   };
 
-  const inputCompleteButton = async () => {
+  const onClickInputCompleteButton = async () => {
     try {
       const { boardTitle, boardDetail, imageSrc } = userInput;
       if (boardTitle !== "" && boardDetail !== "" && imageSrc.src !== "") {
@@ -68,9 +72,15 @@ const CreateBoard = () => {
   // 토큰 가져오기
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("userId");
     if (!token) {
       navigate("/");
       alert("로그인 후 이용해주세요");
+    } else {
+      setUserInput((prevState) => ({
+        ...prevState,
+        userId: userId,
+      }));
     }
   }, [navigate]);
 
@@ -107,7 +117,7 @@ const CreateBoard = () => {
           </form>
           <CreateBoardButtonContainer>
             <CancelButton onClick={handleCancelButton}>돌아가기</CancelButton>
-            <SubmitButton onClick={inputCompleteButton}>
+            <SubmitButton onClick={onClickInputCompleteButton}>
               게시물 작성
             </SubmitButton>
           </CreateBoardButtonContainer>

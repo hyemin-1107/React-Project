@@ -1,25 +1,24 @@
 import axiosInstance from "../axios/axiosInstance";
 
-export const fetchBoardList = async (page) => {
+export const fetchBoardList = async (offset, limit, userId) => {
   try {
-    const response = await axiosInstance.get(
-      `/board/list?page=${page}&limit=10`,
-    );
-    console.log("Response from server:", response);
-    console.log("Response data from server:", response.data);
-    if (response.status === 200) {
-      if (response.data.result === "success") {
-        return {
-          boardList: response.data.data,
-          totalPages: response.data.totalPages,
-        };
-      } else {
-        console.error("Server returned failure result:", response.data.message);
-      }
+    const response = await axiosInstance.get(`/board/list`, {
+      params: {
+        offset,
+        limit,
+        userId,
+      },
+    });
+    const responseData = response.data;
+    if (responseData.code !== 200) {
+      return {
+        boardList: response.data.data,
+        totalPages: response.data.totalPages,
+      };
     } else {
-      console.error("Unexpected status code:", response.status);
+      console.error("예상치 못한 상태 코드:", response.status);
     }
   } catch (error) {
-    console.error("Failed to fetch board list:", error.message);
+    console.error("게시판 목록을 불러오는데 실패했습니다:", error.message);
   }
 };

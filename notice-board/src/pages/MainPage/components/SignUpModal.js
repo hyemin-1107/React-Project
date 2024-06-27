@@ -51,10 +51,10 @@ const SignUpModal = (props) => {
         const res = await signUp(userDataForApi);
 
         console.log(res.data);
-        if (res.data.code === 200) {
+        if (res.code === 200) {
           alert("가입이 완료되었습니다.");
           setIsSignUpModal(false);
-        } else if (res.data.code === 500) {
+        } else if (res.code === 500) {
           alert("중복된 이름입니다.");
         }
       } else if (userId !== "" && birth !== "" && passwordCheck === false) {
@@ -110,7 +110,7 @@ const SignUpModal = (props) => {
           </label>
           <input
             type="password"
-            id="userPw"
+            id="loginUserPw"
             name="userPw"
             placeholder="Password"
             value={userPw}

@@ -17,6 +17,7 @@ const MainPage = () => {
   const [isProfileUpdate, setIsProfileUpdate] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [passwordData, setPasswordData] = useState({
+    userId: "",
     userPw: "",
     newUserPw: "",
     confirmUserPw: "",
@@ -50,16 +51,21 @@ const MainPage = () => {
 
   const handlePasswordChange = async () => {
     try {
-      const res = await changePassword(passwordData);
+      const res = await changePassword({
+        userId: passwordData.userId,
+        userPw: passwordData.userPw,
+        newUserPw: passwordData.newUserPw,
+        confirmUserPw: passwordData.confirmUserPw,
+      });
       console.log(res);
       if (res.code === 200) {
-        alert("비밀번호가 변경되었습니다.");
+        alert("비밀번호가 성공적으로 변경되었습니다.");
         setIsProfileUpdate(false);
       } else {
-        alert(res.message);
+        alert("비밀번호 변경 중 오류가 발생하였습니다.");
       }
     } catch (error) {
-      alert(error.message);
+      alert("비밀번호 변경 중 오류가 발생하였습니다: " + error.message);
     }
   };
 

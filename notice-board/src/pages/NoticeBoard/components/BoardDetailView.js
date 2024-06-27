@@ -13,28 +13,66 @@ const BoardDetailView = (props) => {
   const [boardDetail, setBoardDetail] = useState({});
   const [comments, setComments] = useState([]);
   const [inputComment, setInputComment] = useState("");
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editingContent, setEditingContent] = useState("");
+
   const { boardId, isBoardDetailModal, onClickCloseButton } = props;
+  const token = localStorage.getItem("token");
+
+  const loadBoardDetail = async () => {
+    try {
+      const data = await fetchBoardDetail(boardId);
+      setBoardDetail(data);
+      setComments(data.comments);
+    } catch (error) {
+      console.error("게시판 상세 정보를 불러오는데 실패했습니다.", error);
+    }
+  };
 
   useEffect(() => {
-    const loadBoardDetail = async () => {
-      try {
-        const data = await fetchBoardDetail(boardId);
-        setBoardDetail(data);
-        setComments(data.comments);
-      } catch (error) {
-        console.error("게시판 상세 정보를 불러오는데 실패했습니다.", error);
-      }
-    };
     if (isBoardDetailModal) {
       loadBoardDetail();
     }
   }, [boardId, isBoardDetailModal]);
 
+  const updateCommentsList = async (boardId) => {
+    try {
+      const updatedComments = await fetchComments(boardId);
+      setComments(updatedComments);
+    } catch (error) {
+      console.error("댓글 목록 갱신에 실패했습니다.", error);
+    }
+  };
+
+  const handleUpdateComment = async () => {
+    try {
+      await updateComment(editingCommentId, editingContent);
+      await updateCommentsList(boardId);
+      setEditingCommentId(null);
+      setEditingContent("");
+    } catch (error) {
+      console.error("댓글 수정에 실패했습니다.", error);
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    try {
+      await deleteComment(commentId);
+      await fetchComments(boardId);
+    } catch (error) {
+      console.error("댓글 삭제에 실패했습니다.", error);
+    }
+  };
+
+  const handleEditComment = (commentId, content) => {
+    setEditingCommentId(commentId);
+    setEditingContent(content);
+  };
+
   const handlePostComment = async () => {
     try {
       await postComment(boardId, inputComment);
-      const updatedComments = await fetchComments(boardId);
-      setComments(updatedComments);
+      await fetchComments(boardId);
       setInputComment("");
     } catch (error) {
       console.error("댓글 작성에 실패했습니다.", error);
@@ -67,7 +105,52 @@ const BoardDetailView = (props) => {
             />
             <button onClick={handlePostComment}>POST</button>
           </CommentContainer>
-          {/*  */}
+
+          <CommentList>
+            {comments.map((comment) => (
+              <CommentItem key={comment.commentId}>
+                {editingCommentId === comment.commentId ? (
+                  <>
+                    <input
+                      value={editingContent}
+                      onChange={(e) => setEditingContent(e.target.value)}
+                    />
+                    <button onClick={handleUpdateComment}>Update</button>
+                    <button onClick={() => setEditingCommentId(null)}>
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <p>{comment.content}</p>
+                    <span>{comment.userId}</span>
+                    <span>
+                      {new Date(comment.createAt).toLocaleDateString()}
+                    </span>
+                    {comment.userId === token && (
+                      <>
+                        <button
+                          onClick={() =>
+                            handleEditComment(
+                              comment.commentId,
+                              comment.content,
+                            )
+                          }
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteComment(comment.commentId)}
+                        >
+                          Delete
+                        </button>
+                      </>
+                    )}
+                  </>
+                )}
+              </CommentItem>
+            ))}
+          </CommentList>
         </BoardDetailViewWrap>
       </BoardDetailViewContainer>
     </Wrap>

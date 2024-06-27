@@ -2,14 +2,14 @@ import React from "react";
 import styled from "styled-components";
 
 const Pagination = (props) => {
-  const { onChangePage, page, totalPages } = props;
+  const { handlePageChange, page, totalPages } = props;
 
   const handlePrevClick = () => {
-    if (page > 1) onChangePage(page - 1);
+    if (page > 1) handlePageChange(page - 1);
   };
 
   const handleNextClick = () => {
-    if (page < totalPages) onChangePage(page + 1);
+    if (page < totalPages) handlePageChange(page + 1);
   };
 
   const renderPageNumbers = () => {
@@ -26,7 +26,7 @@ const Pagination = (props) => {
       pageNumbers.push(
         <PageButton
           key={i}
-          onClick={() => onChangePage(i)}
+          onClick={() => handlePageChange(i)}
           isSelected={page === i}
         >
           {i}
@@ -35,6 +35,7 @@ const Pagination = (props) => {
     }
     return pageNumbers;
   };
+
   return (
     <ButtonContent>
       <NextPrevButton onClick={handlePrevClick} disabled={page === 1}>

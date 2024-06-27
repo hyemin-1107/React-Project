@@ -32,21 +32,22 @@ const SignInModal = (props) => {
     console.log("로그인 요청 전:", userData);
     try {
       const res = await signIn(userData);
-      console.log("로그인 응답:", res.data);
-
-      const token = res.data.token;
-      localStorage.setItem("token", token);
-
-      if (res.data.code === 200) {
-        alert("로그인 성공!");
-        setIsLoggedIn(true);
-        navigate("/notice-board");
-      } else if (res.data.code === 401) {
-        alert("아이디 또는 비밀번호가 잘못되었습니다.");
-      } else if (res.data.code === 500) {
-        alert("서버에 에러가 발생했습니다.");
+      console.log("로그인 응답:", res);
+      if (res) {
+        if (res.code === 200) {
+          alert("로그인 성공!");
+          setIsLoggedIn(true);
+          navigate("/notice-board");
+        } else if (res.code === 401) {
+          alert("아이디 또는 비밀번호가 잘못되었습니다.");
+        } else if (res.code === 500) {
+          alert("서버에 에러가 발생했습니다.");
+        } else {
+          alert("서버에 에러가 발생했습니다.");
+        }
       } else {
-        alert("서버에 에러가 발생했습니다.");
+        console.error("로그인에 실패했습니다. 서버 응답이 없습니다.");
+        alert("로그인에 실패했습니다. 서버 응답이 없습니다.");
       }
     } catch (error) {
       console.error("에러가 발생했습니다:", error);

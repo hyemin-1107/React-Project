@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { onClickModal } from "../../utills/onClickModal";
 import { format } from "date-fns";
@@ -15,11 +15,11 @@ const NoticeBoard = () => {
   const [boardList, setBoardList] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const paginationButton = 5;
 
   const navigate = useNavigate();
-  const location = useLocation();
 
-  const navigateToCreateBoard = () => {
+  const onClickNavigateToCreateBoardButton = () => {
     navigate("/create-board");
   };
 
@@ -28,15 +28,17 @@ const NoticeBoard = () => {
     return format(date, "yyyy-MM-dd");
   };
 
-  const onChangePage = (value) => {
-    setPage(value);
-  };
-
   const fetchBoard = async () => {
+    const limit = paginationButton;
+    const offset = (page - 1) * paginationButton;
+    const userId = localStorage.getItem("userId");
     try {
-      const { boardList, totalPages } = await fetchBoardList(page);
-      setBoardList(boardList);
-      setTotalPages(totalPages);
+      const response = await fetchBoardList(offset, limit, userId);
+      if (response.code === 200) {
+        setBoardList(response.boardList);
+        // 필요한 경우 totalPages를 API 응답에서 가져오도록 수정
+        setTotalPages(response.totalPages); // totalCount가 API 응답에 포함된 경우
+      }
     } catch (error) {
       console.error("게시판 리스트를 가져오는데 실패했습니다:", error.message);
       alert(
@@ -45,7 +47,11 @@ const NoticeBoard = () => {
     }
   };
 
-  const onBoardClick = async (boardId) => {
+  useEffect(() => {
+    fetchBoard();
+  }, [page]);
+
+  const openBoardDetailModal = async (boardId) => {
     try {
       const boardDetail = await fetchBoardDetail(boardId);
       setSelectedBoard(boardDetail);
@@ -55,12 +61,15 @@ const NoticeBoard = () => {
     }
   };
 
-  useEffect(() => {
-    fetchBoard();
-    if (location.state?.reload) {
-      fetchBoard(); // 페이지 재로딩 시 게시판 데이터 다시 불러오기
-    }
-  }, [page, location.state?.reload]);
+  const closeBoardDetailModal = () => {
+    setIsBoardDetailModal(false);
+  };
+
+  const handlePageChange = (pageNumber) => {
+    setPage(pageNumber);
+  };
+
+  const pageNumbers = [...Array(totalPages)].map((_, index) => index + 1);
 
   return (
     <>
@@ -74,27 +83,48 @@ const NoticeBoard = () => {
         }
       />
       <BoardContainer>
-        {boardList.map((boardList) => (
-          <Section
-            key={boardList.boardId}
-            onClick={() => onBoardClick(boardList.boardId)}
-          >
-            <BoardImg src={boardList.imagePath} alt="첨부이미지" />
-            <UserBoardContainer>
-              <h2>{boardList.boardTitle}</h2>
-              <p>{boardList.userId}</p>
-              <span>{formattedDate(boardList.createAt)}</span>
-            </UserBoardContainer>
-          </Section>
-        ))}
+        {boardList && boardList.length > 0 ? (
+          boardList.map((board) => (
+            <Section
+              key={board.boardId}
+              onClick={() => openBoardDetailModal(board.boardId)}
+            >
+              <BoardImg src={board.imagePath} alt="첨부이미지" />
+              <UserBoardContainer>
+                <h2>{board.boardTitle}</h2>
+                <p>{board.userId}</p>
+                <span>
+                  {formattedDate(board.createAt).toLocaleDateString()}
+                </span>
+              </UserBoardContainer>
+            </Section>
+          ))
+        ) : (
+          <div>No boards available</div>
+        )}
       </BoardContainer>
       <CreateButtonWrap>
         <Pagination
-          onChangePage={onChangePage}
+          handlePageChange={handlePageChange}
           page={page}
           totalPages={totalPages}
+        >
+          {pageNumbers.map((_, index) => (
+            <PageNumber
+              key={index + 1}
+              isActive={page === index + 1}
+              onClick={() => handlePageChange(index + 1)}
+            >
+              {index + 1}
+            </PageNumber>
+          ))}
+        </Pagination>
+        <BoardDetailView
+          boardId={selectedBoard}
+          isBoardDetailModal={isBoardDetailModal}
+          onClickCloseButton={closeBoardDetailModal}
         />
-        <NavigateToCreateBoard onClick={navigateToCreateBoard}>
+        <NavigateToCreateBoard onClick={onClickNavigateToCreateBoardButton}>
           게시물 올리기
         </NavigateToCreateBoard>
       </CreateButtonWrap>
@@ -185,5 +215,18 @@ const NavigateToCreateBoard = styled.button`
 
   &:hover {
     background-color: #3a809b;
+  }
+`;
+
+const PageNumber = styled.span`
+  margin: 0 5px;
+  padding: 5px 10px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  background: ${({ isActive }) => (isActive ? "#007bff" : "white")};
+  color: ${({ isActive }) => (isActive ? "white" : "black")};
+  &:hover {
+    background: #007bff;
+    color: white;
   }
 `;
