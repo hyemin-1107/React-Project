@@ -14,7 +14,7 @@ import { changePassword } from "../../api/PasswordChangeApi";
 const MainPage = () => {
   const [isSignUpModal, setIsSignUpModal] = useState(false);
   const [isSignInModal, setIsSignInModal] = useState(false);
-  const [isProfileUpdate, setIsProfileUpdate] = useState(false);
+  const [isProfileUpdateModal, setIsProfileUpdateModal] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [passwordData, setPasswordData] = useState({
     userId: "",
@@ -60,7 +60,7 @@ const MainPage = () => {
       console.log(res);
       if (res.code === 200) {
         alert("비밀번호가 성공적으로 변경되었습니다.");
-        setIsProfileUpdate(false);
+        setIsProfileUpdateModal(false);
       } else {
         alert("비밀번호 변경 중 오류가 발생하였습니다.");
       }
@@ -92,7 +92,9 @@ const MainPage = () => {
           <LoginButtonWrap>
             <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
             <LogoutButton
-              onClick={() => onClickModal(isProfileUpdate, setIsProfileUpdate)}
+              onClick={() =>
+                onClickModal(isProfileUpdateModal, setIsProfileUpdateModal)
+              }
             >
               내 정보 수정
             </LogoutButton>
@@ -111,9 +113,11 @@ const MainPage = () => {
             </LoginButton>
           </LoginButtonWrap>
         )}
-        <ProfileUpdateModal isProfileUpdate={isProfileUpdate}>
+        <ProfileUpdateModal isProfileUpdate={isProfileUpdateModal}>
           <ModalCloseButton
-            onClick={() => onClickModal(isProfileUpdate, setIsProfileUpdate)}
+            onClick={() =>
+              onClickModal(isProfileUpdateModal, setIsProfileUpdateModal)
+            }
             src={ico_close}
             alt="닫기"
           />

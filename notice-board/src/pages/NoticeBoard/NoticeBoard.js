@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { onClickModal } from "../../utills/onClickModal";
+// import { onClickModal } from "../../utills/onClickModal";
 import { format } from "date-fns";
 import HeaderContents from "../../components/HeaderContents";
 import BoardDetailView from "./components/BoardDetailView";
 import Pagination from "./components/Pagination";
-import { fetchBoardList } from "../../api/BoardListApi";
 import { fetchBoardDetail } from "../../api/BoardDetailApi";
+import { fetchBoardList } from "../../api/BoardListApi";
 
 const NoticeBoard = () => {
   const [isBoardDetailModal, setIsBoardDetailModal] = useState(false);
@@ -28,16 +28,23 @@ const NoticeBoard = () => {
     return format(date, "yyyy-MM-dd");
   };
 
+  useEffect(() => {
+    fetchBoard();
+  }, [page]);
+
+  //게시물 작성이 완료될때 게시판 api한번 더 호출해야 렌더링된다.
   const fetchBoard = async () => {
     const limit = paginationButton;
     const offset = (page - 1) * paginationButton;
     const userId = localStorage.getItem("userId");
+
     try {
       const response = await fetchBoardList(offset, limit, userId);
-      if (response.code === 200) {
+      if (response) {
         setBoardList(response.boardList);
-        // 필요한 경우 totalPages를 API 응답에서 가져오도록 수정
-        setTotalPages(response.totalPages); // totalCount가 API 응답에 포함된 경우
+        setTotalPages(response.totalPages);
+      } else {
+        console.error("게시판 리스트를 가져오는데 실패했습니다.", response);
       }
     } catch (error) {
       console.error("게시판 리스트를 가져오는데 실패했습니다:", error.message);
@@ -46,10 +53,6 @@ const NoticeBoard = () => {
       );
     }
   };
-
-  useEffect(() => {
-    fetchBoard();
-  }, [page]);
 
   const openBoardDetailModal = async (boardId) => {
     try {
@@ -78,9 +81,7 @@ const NoticeBoard = () => {
         isBoardDetailModal={isBoardDetailModal}
         setIsBoardDetailModal={setIsBoardDetailModal}
         selectedBoard={selectedBoard}
-        onClickCloseButton={() =>
-          onClickModal(isBoardDetailModal, setIsBoardDetailModal)
-        }
+        onClickCloseButton={closeBoardDetailModal}
       />
       <BoardContainer>
         {boardList && boardList.length > 0 ? (
@@ -120,8 +121,9 @@ const NoticeBoard = () => {
           ))}
         </Pagination>
         <BoardDetailView
-          boardId={selectedBoard}
+          selectedBoard={selectedBoard}
           isBoardDetailModal={isBoardDetailModal}
+          setIsBoardDetailModal={setIsBoardDetailModal}
           onClickCloseButton={closeBoardDetailModal}
         />
         <NavigateToCreateBoard onClick={onClickNavigateToCreateBoardButton}>

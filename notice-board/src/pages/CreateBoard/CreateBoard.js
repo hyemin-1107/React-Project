@@ -15,7 +15,6 @@ const CreateBoard = () => {
     },
     previewURL: null,
   });
-
   const {
     boardTitle,
     boardDetail,
@@ -57,9 +56,13 @@ const CreateBoard = () => {
     try {
       const { boardTitle, boardDetail, imageSrc } = userInput;
       if (boardTitle !== "" && boardDetail !== "" && imageSrc.src !== "") {
-        await createBoard(userInput); // API 호출
-        alert("작성이 완료되었습니다.");
-        navigate("/notice-board", { state: { reload: true } }); // 목록 다시 불러오기
+        const response = await createBoard(userInput);
+        if (response) {
+          alert("작성이 완료되었습니다.");
+          navigate("/notice-board");
+        } else {
+          alert("게시물 작성에 실패했습니다.");
+        }
       } else {
         alert("모든 필드를 입력하고 이미지를 첨부해주세요.");
       }

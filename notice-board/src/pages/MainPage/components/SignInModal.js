@@ -28,7 +28,6 @@ const SignInModal = (props) => {
       alert("아이디와 비밀번호를 입력하세요.");
       return;
     }
-    // 요청 보내기 전에 userData 확인 데이터
     console.log("로그인 요청 전:", userData);
     try {
       const res = await signIn(userData);
