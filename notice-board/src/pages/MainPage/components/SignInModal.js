@@ -35,6 +35,7 @@ const SignInModal = (props) => {
       if (res) {
         if (res.code === 200) {
           alert("로그인 성공!");
+          localStorage.setItem("userId", userData.userId);
           setIsLoggedIn(true);
           navigate("/notice-board");
         } else if (res.code === 401) {

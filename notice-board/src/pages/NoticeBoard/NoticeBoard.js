@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 // import { onClickModal } from "../../utills/onClickModal";
-import { format } from "date-fns";
+// import { format } from "date-fns";
 import HeaderContents from "../../components/HeaderContents";
 import BoardDetailView from "./components/BoardDetailView";
 import Pagination from "./components/Pagination";
@@ -15,7 +15,7 @@ const NoticeBoard = () => {
   const [boardList, setBoardList] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const paginationButton = 5;
+  const limitButton = 6;
 
   const navigate = useNavigate();
 
@@ -25,7 +25,7 @@ const NoticeBoard = () => {
 
   const formattedDate = (dateString) => {
     const date = new Date(dateString);
-    return format(date, "yyyy-MM-dd");
+    return date;
   };
 
   useEffect(() => {
@@ -34,8 +34,8 @@ const NoticeBoard = () => {
 
   //게시물 작성이 완료될때 게시판 api한번 더 호출해야 렌더링된다.
   const fetchBoard = async () => {
-    const limit = paginationButton;
-    const offset = (page - 1) * paginationButton;
+    const limit = limitButton;
+    const offset = (page - 1) * limitButton;
     const userId = localStorage.getItem("userId");
 
     try {
@@ -72,8 +72,6 @@ const NoticeBoard = () => {
     setPage(pageNumber);
   };
 
-  const pageNumbers = [...Array(totalPages)].map((_, index) => index + 1);
-
   return (
     <>
       <HeaderContents />
@@ -109,27 +107,16 @@ const NoticeBoard = () => {
           handlePageChange={handlePageChange}
           page={page}
           totalPages={totalPages}
-        >
-          {pageNumbers.map((_, index) => (
-            <PageNumber
-              key={index + 1}
-              isActive={page === index + 1}
-              onClick={() => handlePageChange(index + 1)}
-            >
-              {index + 1}
-            </PageNumber>
-          ))}
-        </Pagination>
-        <BoardDetailView
-          selectedBoard={selectedBoard}
-          isBoardDetailModal={isBoardDetailModal}
-          setIsBoardDetailModal={setIsBoardDetailModal}
-          onClickCloseButton={closeBoardDetailModal}
         />
         <NavigateToCreateBoard onClick={onClickNavigateToCreateBoardButton}>
           게시물 올리기
         </NavigateToCreateBoard>
       </CreateButtonWrap>
+      <BoardDetailView
+        isBoardDetailModal={isBoardDetailModal}
+        selectedBoard={selectedBoard}
+        onClickCloseButton={closeBoardDetailModal}
+      />
     </>
   );
 };
@@ -154,7 +141,7 @@ const Section = styled.section`
   height: 39vh;
 
   background-color: #fff;
-  border: 1px solid #666;
+  border: 1px solid #999;
   border-radius: 6px;
 
   box-shadow:

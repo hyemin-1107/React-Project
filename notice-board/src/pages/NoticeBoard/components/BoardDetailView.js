@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import {
-  fetchBoardDetail,
+  // fetchBoardDetail,
   fetchComments,
   postComment,
   updateComment,
@@ -10,30 +10,19 @@ import {
 import ico_close from "../../../images/ico_close.png";
 
 const BoardDetailView = (props) => {
-  const [boardDetail, setBoardDetail] = useState({});
   const [comments, setComments] = useState([]);
   const [inputComment, setInputComment] = useState("");
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editingContent, setEditingContent] = useState("");
 
-  const { boardId, isBoardDetailModal, onClickCloseButton } = props;
+  const { isBoardDetailModal, onClickCloseButton, selectedBoard } = props;
   const token = localStorage.getItem("token");
 
-  const loadBoardDetail = async () => {
-    try {
-      const data = await fetchBoardDetail(boardId);
-      setBoardDetail(data);
-      setComments(data.comments);
-    } catch (error) {
-      console.error("게시판 상세 정보를 불러오는데 실패했습니다.", error);
-    }
-  };
-
   useEffect(() => {
-    if (isBoardDetailModal) {
-      loadBoardDetail();
+    if (isBoardDetailModal && selectedBoard) {
+      updateCommentsList(selectedBoard.boardId);
     }
-  }, [boardId, isBoardDetailModal]);
+  }, [isBoardDetailModal, selectedBoard]);
 
   const updateCommentsList = async (boardId) => {
     try {
@@ -47,7 +36,7 @@ const BoardDetailView = (props) => {
   const handleUpdateComment = async () => {
     try {
       await updateComment(editingCommentId, editingContent);
-      await updateCommentsList(boardId);
+      await updateCommentsList(selectedBoard.boardId);
       setEditingCommentId(null);
       setEditingContent("");
     } catch (error) {
@@ -58,7 +47,7 @@ const BoardDetailView = (props) => {
   const handleDeleteComment = async (commentId) => {
     try {
       await deleteComment(commentId);
-      await fetchComments(boardId);
+      await updateCommentsList(selectedBoard.boardId);
     } catch (error) {
       console.error("댓글 삭제에 실패했습니다.", error);
     }
@@ -71,8 +60,8 @@ const BoardDetailView = (props) => {
 
   const handlePostComment = async () => {
     try {
-      await postComment(boardId, inputComment);
-      await fetchComments(boardId);
+      const newComment = await postComment(selectedBoard.boardId, inputComment);
+      setComments([...comments, newComment]); // 새로운 댓글을 기존 댓글 목록에 추가
       setInputComment("");
     } catch (error) {
       console.error("댓글 작성에 실패했습니다.", error);
@@ -83,20 +72,24 @@ const BoardDetailView = (props) => {
     setInputComment(e.target.value);
   };
 
+  if (!selectedBoard) {
+    return null; // selectedBoard가 없으면 아무것도 렌더링하지 않음
+  }
+
   return (
     <Wrap isBoardDetailModal={isBoardDetailModal}>
       <BoardDetailViewContainer>
         <BoardDetailViewWrap>
           <BoardDetailViewHeader>
-            <h2>{boardDetail.boardTitle}</h2>
+            <h2>{selectedBoard.boardTitle || "Loading..."}</h2>
           </BoardDetailViewHeader>
           <CloseButton src={ico_close} alt="" onClick={onClickCloseButton} />
           <BoardDetailViewUserDate>
-            <div>{boardDetail.userId}</div>
-            <div>{new Date(boardDetail.createAt).toLocaleDateString()}</div>
+            <div>{selectedBoard.userId}</div>
+            <div>{new Date(selectedBoard.createAt).toLocaleDateString()}</div>
           </BoardDetailViewUserDate>
-          <BoardImg src={boardDetail.imagePath} alt="" />
-          <p>{boardDetail.boardDetail}</p>
+          <BoardImg src={selectedBoard.imagePath} alt="" />
+          <p>{selectedBoard.boardDetail}</p>
           <CommentContainer>
             <input
               onChange={InputComment}
@@ -105,51 +98,54 @@ const BoardDetailView = (props) => {
             />
             <button onClick={handlePostComment}>POST</button>
           </CommentContainer>
-
           <CommentList>
-            {comments.map((comment) => (
-              <CommentItem key={comment.commentId}>
-                {editingCommentId === comment.commentId ? (
-                  <>
-                    <input
-                      value={editingContent}
-                      onChange={(e) => setEditingContent(e.target.value)}
-                    />
-                    <button onClick={handleUpdateComment}>Update</button>
-                    <button onClick={() => setEditingCommentId(null)}>
-                      Cancel
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <p>{comment.content}</p>
-                    <span>{comment.userId}</span>
-                    <span>
-                      {new Date(comment.createAt).toLocaleDateString()}
-                    </span>
-                    {comment.userId === token && (
-                      <>
-                        <button
-                          onClick={() =>
-                            handleEditComment(
-                              comment.commentId,
-                              comment.content,
-                            )
-                          }
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDeleteComment(comment.commentId)}
-                        >
-                          Delete
-                        </button>
-                      </>
-                    )}
-                  </>
-                )}
-              </CommentItem>
-            ))}
+            {comments &&
+              comments.length > 0 &&
+              comments.map((comment) => (
+                <CommentItem key={comment.commentId}>
+                  {editingCommentId === comment.commentId ? (
+                    <>
+                      <input
+                        value={editingContent}
+                        onChange={(e) => setEditingContent(e.target.value)}
+                      />
+                      <button onClick={handleUpdateComment}>Update</button>
+                      <button onClick={() => setEditingCommentId(null)}>
+                        Cancel
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <p>{comment.content}</p>
+                      <span>{comment.userId}</span>
+                      <span>
+                        {new Date(comment.createAt).toLocaleDateString()}
+                      </span>
+                      {comment.userId === token && (
+                        <>
+                          <button
+                            onClick={() =>
+                              handleEditComment(
+                                comment.commentId,
+                                comment.content,
+                              )
+                            }
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() =>
+                              handleDeleteComment(comment.commentId)
+                            }
+                          >
+                            Delete
+                          </button>
+                        </>
+                      )}
+                    </>
+                  )}
+                </CommentItem>
+              ))}
           </CommentList>
         </BoardDetailViewWrap>
       </BoardDetailViewContainer>
