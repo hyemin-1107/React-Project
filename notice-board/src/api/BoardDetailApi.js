@@ -18,6 +18,7 @@ export const fetchBoardDetail = async (boardId) => {
 export const fetchComments = async (boardId) => {
   try {
     const response = await axiosInstance.get(`/comment/${boardId}`);
+    console.log("API Response:", response.data);
     if (response.data.code === 200) {
       return response.data.data;
     } else {
@@ -33,7 +34,7 @@ export const fetchComments = async (boardId) => {
 // 코드번호로 if 관리
 export const postComment = async (boardId, comment) => {
   try {
-    const response = await axiosInstance.post(`/board/${boardId}/comment`, {
+    const response = await axiosInstance.post(`/comment/`, {
       boardId,
       comment,
     });

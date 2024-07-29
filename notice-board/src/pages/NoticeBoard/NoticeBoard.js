@@ -14,7 +14,7 @@ const NoticeBoard = () => {
   const [selectedBoard, setSelectedBoard] = useState(null);
   const [boardList, setBoardList] = useState([]);
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [totalPages, setTotalPages] = useState();
   const limitButton = 6;
 
   const navigate = useNavigate();
@@ -88,7 +88,7 @@ const NoticeBoard = () => {
               key={board.boardId}
               onClick={() => openBoardDetailModal(board.boardId)}
             >
-              <BoardImg src={board.imagePath} alt="첨부이미지" />
+              <BoardImg src={board.src} alt="첨부이미지" />
               <UserBoardContainer>
                 <h2>{board.boardTitle}</h2>
                 <p>{board.userId}</p>
@@ -207,15 +207,15 @@ const NavigateToCreateBoard = styled.button`
   }
 `;
 
-const PageNumber = styled.span`
-  margin: 0 5px;
-  padding: 5px 10px;
-  border: 1px solid #ddd;
-  cursor: pointer;
-  background: ${({ isActive }) => (isActive ? "#007bff" : "white")};
-  color: ${({ isActive }) => (isActive ? "white" : "black")};
-  &:hover {
-    background: #007bff;
-    color: white;
-  }
-`;
+// const PageNumber = styled.span`
+//   margin: 0 5px;
+//   padding: 5px 10px;
+//   border: 1px solid #ddd;
+//   cursor: pointer;
+//   background: ${({ isActive }) => (isActive ? "#007bff" : "white")};
+//   color: ${({ isActive }) => (isActive ? "white" : "black")};
+//   &:hover {
+//     background: #007bff;
+//     color: white;
+//   }
+// `;

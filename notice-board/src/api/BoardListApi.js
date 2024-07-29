@@ -14,7 +14,7 @@ export const fetchBoardList = async (offset, limit, userId) => {
       console.log(response);
       return {
         boardList: response.data.data,
-        // totalPages: response.totalPages,
+        // totalItems: response.data.totalItems,
       };
     } else {
       console.error("예상치 못한 상태 코드:", response.status);

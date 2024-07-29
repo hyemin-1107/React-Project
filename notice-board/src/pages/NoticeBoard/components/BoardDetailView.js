@@ -22,12 +22,14 @@ const BoardDetailView = (props) => {
     if (isBoardDetailModal && selectedBoard) {
       updateCommentsList(selectedBoard.boardId);
     }
+    console.log("Selected Board:", selectedBoard);
   }, [isBoardDetailModal, selectedBoard]);
 
   const updateCommentsList = async (boardId) => {
     try {
       const updatedComments = await fetchComments(boardId);
       setComments(updatedComments);
+      console.log("Updated Comments:", updatedComments);
     } catch (error) {
       console.error("댓글 목록 갱신에 실패했습니다.", error);
     }
@@ -75,20 +77,20 @@ const BoardDetailView = (props) => {
   if (!selectedBoard) {
     return null; // selectedBoard가 없으면 아무것도 렌더링하지 않음
   }
-
+  console.log("Image Source:", selectedBoard.imagePath);
   return (
     <Wrap isBoardDetailModal={isBoardDetailModal}>
       <BoardDetailViewContainer>
         <BoardDetailViewWrap>
           <BoardDetailViewHeader>
-            <h2>{selectedBoard.boardTitle || "Loading..."}</h2>
+            <h2>{selectedBoard.boardTitle}</h2>
           </BoardDetailViewHeader>
           <CloseButton src={ico_close} alt="" onClick={onClickCloseButton} />
           <BoardDetailViewUserDate>
             <div>{selectedBoard.userId}</div>
             <div>{new Date(selectedBoard.createAt).toLocaleDateString()}</div>
           </BoardDetailViewUserDate>
-          <BoardImg src={selectedBoard.imagePath} alt="" />
+          <BoardImg src={selectedBoard.imagePath} alt="첨부이미지" />
           <p>{selectedBoard.boardDetail}</p>
           <CommentContainer>
             <input

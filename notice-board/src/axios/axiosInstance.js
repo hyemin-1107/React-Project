@@ -1,12 +1,12 @@
 import axios from "axios";
 
+const token = localStorage.getItem("token");
 const defaultOptions = {
   baseURL: process.env.REACT_APP_API_URL,
   headers: {
     "Content-Type": "application/json",
   },
 };
-const token = localStorage.getItem("token");
 if (token) {
   defaultOptions.headers.Authorization = `Bearer ${token}`;
 }
@@ -25,5 +25,4 @@ axiosInstance.interceptors.request.use(
     return Promise.reject(error);
   },
 );
-
 export default axiosInstance;
