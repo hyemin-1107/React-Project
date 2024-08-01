@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import ico_close from "../../../images/ico_close.png";
-import { signUp } from "../../../api/SignUpApi";
+import {
+  onChangeSignUpHandler,
+  onClickSignUpButton,
+} from "./SignUpModalHandlers";
 
 const SignUpModal = (props) => {
   const [userData, setUserData] = useState({
@@ -10,9 +13,9 @@ const SignUpModal = (props) => {
     birth: "",
     confirmPassword: "",
   });
-  const { isSignUpModal, onClickCloseButton, setIsSignUpModal } = props;
+  const { isSignUpModal, setIsSignUpModal } = props;
 
-  useEffect(() => {
+  const signUpCallBackFunction = () => {
     if (isSignUpModal) {
       setUserData({
         userId: "",
@@ -21,121 +24,45 @@ const SignUpModal = (props) => {
         confirmPassword: "",
       });
     }
+  };
+
+  useEffect(() => {
+    signUpCallBackFunction();
   }, [isSignUpModal]);
-
-  const onChangeSignUpHandler = (e) => {
-    const { name, value } = e.target;
-    setUserData({
-      ...userData,
-      [name]: value,
-    });
-  };
-
-  const { userId, birth, userPw, confirmPassword } = userData;
-  const passwordCheck = userPw === confirmPassword;
-
-  const handleSignUpButton = async () => {
-    try {
-      if (
-        userId !== "" &&
-        birth !== "" &&
-        userPw !== "" &&
-        passwordCheck === true
-      ) {
-        const userDataForApi = {
-          userId: userId,
-          userPw: userPw,
-          birth: birth,
-        };
-
-        const res = await signUp(userDataForApi);
-
-        console.log(res.data);
-        if (res.code === 200) {
-          alert("가입이 완료되었습니다.");
-          setIsSignUpModal(false);
-        } else if (res.code === 500) {
-          alert("중복된 이름입니다.");
-        }
-      } else if (userId !== "" && birth !== "" && passwordCheck === false) {
-        alert("비밀번호가 일치하지 않습니다.");
-      } else {
-        alert("작성을 완료해주세요.");
-      }
-    } catch (error) {
-      console.error("가입에 실패했습니다:", error);
-      alert("가입에 실패했습니다.");
-    }
-  };
 
   return (
     <SignUpModalWrap isSignUpModal={isSignUpModal}>
       <ModalCloseButton
         src={ico_close}
         alt="닫기"
-        isSignUpModal={isSignUpModal}
-        onClick={onClickCloseButton}
+        onClick={() => setIsSignUpModal(false)}
       />
       <SignUpInputWrap>
-        {/* TODO USE MAP FUNCTION */}
-        <div>
-          <label htmlFor="username">
-            사용할 이름을 입력해주세요 <span>*</span>
-          </label>
-          <input
-            type="text"
-            id="userId"
-            name="userId"
-            placeholder="Username"
-            value={userId}
-            onChange={onChangeSignUpHandler}
-          ></input>
-        </div>
-        <div>
-          <label htmlFor="birth">
-            생년월일을 입력해주세요(6자리) <span>*</span>
-          </label>
-          <input
-            type="number"
-            id="birth"
-            name="birth"
-            placeholder="Birth Date"
-            value={birth}
-            onChange={onChangeSignUpHandler}
-          ></input>
-        </div>
-        <div>
-          <label htmlFor="userPw">
-            비밀번호를 입력해주세요 <span>*</span>
-          </label>
-          <input
-            type="password"
-            id="loginUserPw"
-            name="userPw"
-            placeholder="Password"
-            value={userPw}
-            onChange={onChangeSignUpHandler}
-          ></input>
-        </div>
-        <div>
-          <label htmlFor="confirmPassword">
-            한번 더 입력해주세요 <span>*</span>
-          </label>
-          <input
-            type="password"
-            id="confirmPassword"
-            name="confirmPassword"
-            placeholder="Password"
-            value={confirmPassword}
-            onChange={onChangeSignUpHandler}
-          ></input>
-        </div>
+        {SIGN_UP_INPUT.map((input) => (
+          <div key={input.id}>
+            <label htmlFor={input.id}>
+              {input.label}
+              <span>*</span>
+            </label>
+            <input
+              type={input.type}
+              id={input.id}
+              name={input.name}
+              placeholder={input.placeholder}
+              value={userData[input.name]}
+              onChange={(e) => onChangeSignUpHandler(e, setUserData)}
+            ></input>
+          </div>
+        ))}
       </SignUpInputWrap>
-      <SignUpButtoncontents>
-        <button type="submit" onClick={handleSignUpButton}>
+      <SignUpButtonContents>
+        <button
+          type="submit"
+          onClick={() => onClickSignUpButton(userData, setIsSignUpModal)}
+        >
           가입 완료
         </button>
-      </SignUpButtoncontents>
+      </SignUpButtonContents>
     </SignUpModalWrap>
   );
 };
@@ -204,7 +131,7 @@ const SignUpInputWrap = styled.article`
   flex-direction: column;
 
   gap: 16px;
-  margin: 96px 100px 10px;
+  margin: 97px 100px 10px;
 
   label {
     span {
@@ -227,12 +154,12 @@ const SignUpInputWrap = styled.article`
   }
 `;
 
-const SignUpButtoncontents = styled.section`
+const SignUpButtonContents = styled.section`
   display: flex;
   justify-content: center;
 
   gap: 20px;
-  margin: 36px 100px 0;
+  margin: 38px 100px 0;
 
   button {
     padding: 10px;
@@ -256,3 +183,34 @@ const SignUpButtoncontents = styled.section`
     }
   }
 `;
+
+const SIGN_UP_INPUT = [
+  {
+    id: "userId",
+    name: "userId",
+    type: "text",
+    placeholder: "Username",
+    label: "사용할 이름을 입력해주세요",
+  },
+  {
+    id: "birth",
+    name: "birth",
+    type: "number",
+    placeholder: "Birth Date",
+    label: "생년월일을 입력해주세요(6자리)",
+  },
+  {
+    id: "userPw",
+    name: "userPw",
+    type: "password",
+    placeholder: "Password",
+    label: "비밀번호를 입력해주세요",
+  },
+  {
+    id: "confirmPassword",
+    name: "confirmPassword",
+    type: "password",
+    placeholder: "Password",
+    label: "한번 더 입력해주세요",
+  },
+];

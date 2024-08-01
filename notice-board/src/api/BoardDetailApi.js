@@ -4,6 +4,7 @@ import axiosInstance from "../axios/axiosInstance";
 export const fetchBoardDetail = async (boardId) => {
   try {
     const response = await axiosInstance.get(`/board/${boardId}`);
+    console.log("API Response:", response.data.data);
     if (response.data.code === 200) {
       return response.data.data;
     } else {
@@ -18,7 +19,7 @@ export const fetchBoardDetail = async (boardId) => {
 export const fetchComments = async (boardId) => {
   try {
     const response = await axiosInstance.get(`/comment/${boardId}`);
-    console.log("API Response:", response.data);
+    console.log("API Response Comment:", response.data);
     if (response.data.code === 200) {
       return response.data.data;
     } else {

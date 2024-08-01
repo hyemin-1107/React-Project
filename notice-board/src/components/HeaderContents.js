@@ -36,7 +36,7 @@ const Header = styled.header`
   height: 80px;
 
   background-color: #fff;
-  border-bottom: 2px solid #666;
+  border-bottom: 1px solid #888;
   box-shadow:
     rgba(0, 0, 0, 0.1) 0px 1px 3px,
     rgba(0, 0, 0, 0.1) 0px 5px 10px,

@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import ico_close from "../../../images/ico_close.png";
-import { signIn } from "../../../api/SignInApi";
+import {
+  onChangeSignInHandler,
+  onClickLoginButton,
+} from "./SignInModalHandlers";
 
 const SignInModal = (props) => {
   const [userData, setUserData] = useState({
@@ -10,76 +13,35 @@ const SignInModal = (props) => {
     userPw: "",
   });
 
-  const { isSignInModal, onClickCloseButton, openSignUpModal, setIsLoggedIn } =
+  const { isSignInModal, setIsSignInModal, openSignUpModal, setIsLoggedIn } =
     props;
   const navigate = useNavigate();
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setUserData({
-      ...userData,
-      [name]: value,
-    });
-  };
-
-  const handleLoginButton = async (e) => {
-    e.preventDefault();
-    if (!userData.userId || !userData.userPw) {
-      alert("아이디와 비밀번호를 입력하세요.");
-      return;
-    }
-    console.log("로그인 요청 전:", userData);
-    try {
-      const res = await signIn(userData);
-      console.log("로그인 응답:", res);
-      if (res) {
-        if (res.code === 200) {
-          alert("로그인 성공!");
-          localStorage.setItem("userId", userData.userId);
-          setIsLoggedIn(true);
-          navigate("/notice-board");
-        } else if (res.code === 401) {
-          alert("아이디 또는 비밀번호가 잘못되었습니다.");
-        } else if (res.code === 500) {
-          alert("서버에 에러가 발생했습니다.");
-        } else {
-          alert("서버에 에러가 발생했습니다.");
-        }
-      } else {
-        console.error("로그인에 실패했습니다. 서버 응답이 없습니다.");
-        alert("로그인에 실패했습니다. 서버 응답이 없습니다.");
-      }
-    } catch (error) {
-      console.error("에러가 발생했습니다:", error);
-      alert("에러가 발생했습니다.");
-    }
-  };
 
   return (
     <SignInModalWrap isSignInModal={isSignInModal}>
       <ModalCloseButton
-        onClick={onClickCloseButton}
+        onClick={() => setIsSignInModal(false)}
         src={ico_close}
         alt="닫기"
       />
       <LoginWrap>
         <LoginTitle>Sign In</LoginTitle>
-        <form onSubmit={handleLoginButton}>
+        <form
+          onSubmit={(e) =>
+            onClickLoginButton(e, userData, setIsLoggedIn, navigate)
+          }
+        >
           <LoginInputWrap>
-            <LoginInput
-              type="text"
-              name="userId"
-              placeholder="Username"
-              value={userData.userId}
-              onChange={handleInputChange}
-            />
-            <LoginInput
-              type="password"
-              name="userPw"
-              placeholder="Password"
-              value={userData.userPw}
-              onChange={handleInputChange}
-            />
+            {SIGN_IN_INPUT.map((input) => (
+              <LoginInput
+                key={input.name}
+                type={input.type}
+                name={input.name}
+                placeholder={input.placeholder}
+                value={userData[input.name]}
+                onChange={(e) => onChangeSignInHandler(e, setUserData)}
+              />
+            ))}
           </LoginInputWrap>
           <LoginSignInButton type="submit">Sign In</LoginSignInButton>
         </form>
@@ -186,7 +148,7 @@ const LoginInput = styled.input`
 `;
 
 const LoginSignInButton = styled.button`
-  margin-top: 8px;
+  margin-top: 10px;
   padding: 4px;
 
   width: 100%;
@@ -227,7 +189,7 @@ const LoginSignUpText = styled.section`
 `;
 
 const LoginSignUpButton = styled.button`
-  padding: 5px 12px;
+  padding: 5px 14px;
 
   background-color: #ffc338;
   box-shadow:
@@ -245,6 +207,19 @@ const LoginSignUpButton = styled.button`
   transition: 0.2s;
 
   &:hover {
-    background-color: #ffc339;
+    background-color: #ffc335;
   }
 `;
+
+const SIGN_IN_INPUT = [
+  {
+    type: "text",
+    name: "userId",
+    placeholder: "Username",
+  },
+  {
+    type: "password",
+    name: "userPw",
+    placeholder: "Password",
+  },
+];

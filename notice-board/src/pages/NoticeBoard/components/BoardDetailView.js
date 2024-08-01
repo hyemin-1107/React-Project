@@ -8,6 +8,8 @@ import {
   deleteComment,
 } from "../../../api/BoardDetailApi";
 import ico_close from "../../../images/ico_close.png";
+import CommentList from "./CommentList";
+import { commentObject } from "../../../utills/message";
 
 const BoardDetailView = (props) => {
   const [comments, setComments] = useState([]);
@@ -18,20 +20,32 @@ const BoardDetailView = (props) => {
   const { isBoardDetailModal, onClickCloseButton, selectedBoard } = props;
   const token = localStorage.getItem("token");
 
-  useEffect(() => {
+  const updateCommentCallBackFunction = () => {
     if (isBoardDetailModal && selectedBoard) {
       updateCommentsList(selectedBoard.boardId);
     }
+  };
+
+  useEffect(() => {
+    updateCommentCallBackFunction();
     console.log("Selected Board:", selectedBoard);
   }, [isBoardDetailModal, selectedBoard]);
+
+  const {
+    updatedCommentsError,
+    editingCommentError,
+    deleteCommentError,
+    postCommentError,
+  } = commentObject;
 
   const updateCommentsList = async (boardId) => {
     try {
       const updatedComments = await fetchComments(boardId);
       setComments(updatedComments);
-      console.log("Updated Comments:", updatedComments);
+      // console.log("Updated Comments:", updatedComments);
     } catch (error) {
-      console.error("댓글 목록 갱신에 실패했습니다.", error);
+      // console.error("댓글 목록 갱신에 실패했습니다.", error);
+      alert(updatedCommentsError);
     }
   };
 
@@ -42,7 +56,8 @@ const BoardDetailView = (props) => {
       setEditingCommentId(null);
       setEditingContent("");
     } catch (error) {
-      console.error("댓글 수정에 실패했습니다.", error);
+      // console.error("댓글 수정에 실패했습니다.", error);
+      alert(editingCommentError);
     }
   };
 
@@ -51,7 +66,8 @@ const BoardDetailView = (props) => {
       await deleteComment(commentId);
       await updateCommentsList(selectedBoard.boardId);
     } catch (error) {
-      console.error("댓글 삭제에 실패했습니다.", error);
+      // console.error("댓글 삭제에 실패했습니다.", error);
+      alert(deleteCommentError);
     }
   };
 
@@ -63,10 +79,11 @@ const BoardDetailView = (props) => {
   const handlePostComment = async () => {
     try {
       const newComment = await postComment(selectedBoard.boardId, inputComment);
-      setComments([...comments, newComment]); // 새로운 댓글을 기존 댓글 목록에 추가
+      setComments([...comments, newComment]);
       setInputComment("");
     } catch (error) {
-      console.error("댓글 작성에 실패했습니다.", error);
+      // console.error("댓글 작성에 실패했습니다.", error);
+      alert(postCommentError);
     }
   };
 
@@ -90,7 +107,7 @@ const BoardDetailView = (props) => {
             <div>{selectedBoard.userId}</div>
             <div>{new Date(selectedBoard.createAt).toLocaleDateString()}</div>
           </BoardDetailViewUserDate>
-          <BoardImg src={selectedBoard.imagePath} alt="첨부이미지" />
+          <BoardImg src={selectedBoard.src} alt="noticeBoardImg" />
           <p>{selectedBoard.boardDetail}</p>
           <CommentContainer>
             <input
@@ -100,55 +117,17 @@ const BoardDetailView = (props) => {
             />
             <button onClick={handlePostComment}>POST</button>
           </CommentContainer>
-          <CommentList>
-            {comments &&
-              comments.length > 0 &&
-              comments.map((comment) => (
-                <CommentItem key={comment.commentId}>
-                  {editingCommentId === comment.commentId ? (
-                    <>
-                      <input
-                        value={editingContent}
-                        onChange={(e) => setEditingContent(e.target.value)}
-                      />
-                      <button onClick={handleUpdateComment}>Update</button>
-                      <button onClick={() => setEditingCommentId(null)}>
-                        Cancel
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <p>{comment.content}</p>
-                      <span>{comment.userId}</span>
-                      <span>
-                        {new Date(comment.createAt).toLocaleDateString()}
-                      </span>
-                      {comment.userId === token && (
-                        <>
-                          <button
-                            onClick={() =>
-                              handleEditComment(
-                                comment.commentId,
-                                comment.content,
-                              )
-                            }
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() =>
-                              handleDeleteComment(comment.commentId)
-                            }
-                          >
-                            Delete
-                          </button>
-                        </>
-                      )}
-                    </>
-                  )}
-                </CommentItem>
-              ))}
-          </CommentList>
+          <CommentList
+            comments={comments}
+            token={token}
+            editingCommentId={editingCommentId}
+            editingContent={editingContent}
+            handleEditComment={handleEditComment}
+            handleUpdateComment={handleUpdateComment}
+            handleDeleteComment={handleDeleteComment}
+            setEditingCommentId={setEditingCommentId}
+            setEditingContent={setEditingContent}
+          />
         </BoardDetailViewWrap>
       </BoardDetailViewContainer>
     </Wrap>
@@ -284,26 +263,5 @@ const CommentContainer = styled.div`
     &:hover {
       background-color: #3a809b;
     }
-  }
-`;
-
-const CommentList = styled.div`
-  margin-top: 20px;
-`;
-
-const CommentItem = styled.div`
-  border-bottom: 1px solid #eee;
-  padding: 10px 0;
-  p {
-    margin: 0;
-  }
-  small {
-    display: block;
-    margin-top: 5px;
-    color: #999;
-  }
-  button {
-    margin-top: 10px;
-    margin-right: 10px;
   }
 `;
