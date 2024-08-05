@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { createBoard } from "../../api/CreateBoardApi";
+import { createNewBoardApi } from "../../api/CreateBoardApi";
+import { createBoardObject } from "../../utills/message";
 import HeaderContents from "../../components/HeaderContents";
 import CreateBoardForm from "./components/CreateBoardForm";
-import { createBoardObject } from "../../utills/message";
 
 const CreateBoard = () => {
   const [userInput, setUserInput] = useState({
@@ -48,30 +48,35 @@ const CreateBoard = () => {
     navigate("/notice-board");
   };
 
-  const { success, error, fillInValues, catchError } = createBoardObject;
+  const {
+    createBoardSuccess,
+    createBoardError,
+    createBoardFillInValues,
+    createBoardCatchError,
+  } = createBoardObject;
   const onClickInputCompleteButton = async () => {
     try {
       const { boardTitle, boardDetail, imageSrc } = userInput;
       if (boardTitle !== "" && boardDetail !== "" && imageSrc.src !== "") {
-        const response = await createBoard(userInput);
+        const response = await createNewBoardApi(userInput);
         if (response) {
-          alert(success);
+          alert(createBoardSuccess);
           navigate("/notice-board");
         } else {
-          alert(error);
+          alert(createBoardError);
         }
       } else {
-        alert(fillInValues);
+        alert(createBoardFillInValues);
       }
     } catch (error) {
-      alert(catchError);
+      alert(createBoardCatchError);
     }
   };
 
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
 
-  const loginCallBackFunction = () => {
+  const signInUnToken = () => {
     if (!token) {
       navigate("/");
       alert("로그인 후 이용해주세요");
@@ -84,7 +89,7 @@ const CreateBoard = () => {
   };
 
   useEffect(() => {
-    loginCallBackFunction();
+    signInUnToken();
   }, [navigate]);
 
   return (

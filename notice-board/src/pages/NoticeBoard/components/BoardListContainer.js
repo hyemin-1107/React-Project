@@ -5,53 +5,52 @@ const BoardListContainer = (props) => {
   const { boardList, openBoardDetailModal, formattedDate } = props;
 
   return (
-    <Container>
-      {boardList && (
-        <BoardContainer>
-          {boardList.map((board) => (
-            <Section
-              key={board.boardId}
-              onClick={() => openBoardDetailModal(board.boardId)}
-            >
-              <BoardImg src={board.src} alt="첨부이미지" />
-              <UserBoardContainer>
-                <h2>{board.boardTitle}</h2>
-                <p>{board.userId}</p>
-                <span>
-                  {formattedDate(board.createAt).toLocaleDateString()}
-                </span>
-              </UserBoardContainer>
-            </Section>
-          ))}
-        </BoardContainer>
+    <BoardContainer>
+      {boardList && boardList.length > 0 ? (
+        boardList.map((board) => (
+          <Section
+            key={board.boardId}
+            onClick={() => openBoardDetailModal(board.boardId)}
+          >
+            <BoardImg src={board.src} alt="첨부이미지" />
+            <UserBoardContainer>
+              <h2>{board.boardTitle}</h2>
+              <p>{board.userId}</p>
+              <span>{formattedDate(board.createAt).toLocaleDateString()}</span>
+            </UserBoardContainer>
+          </Section>
+        ))
+      ) : (
+        <div>No boards available</div>
       )}
-    </Container>
+    </BoardContainer>
   );
 };
 
 export default BoardListContainer;
 
-const Container = styled.div`
-  margin-bottom: 20px;
-  height: 77dvh;
-`;
-
 const BoardContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
+  justify-content: space-between;
+
   margin-top: 20px;
+
+  height: 80vh;
 `;
 
 const Section = styled.section`
-  width: 30%;
   margin-bottom: 20px;
-  cursor: pointer;
+
+  width: 32%;
+
+  background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 10px;
   overflow: hidden;
+  cursor: pointer;
   &:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 `;
 
@@ -62,16 +61,17 @@ const BoardImg = styled.img`
 `;
 
 const UserBoardContainer = styled.div`
-  padding: 10px;
+  padding: 10px 16px;
+  border-top: 1px solid #ddd;
   h2 {
-    margin: 0;
-    font-size: 1.5em;
   }
   p {
-    margin: 0.5em 0;
+    margin: 5px 0;
   }
   span {
-    font-size: 0.9em;
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 14px;
     color: #555;
   }
 `;

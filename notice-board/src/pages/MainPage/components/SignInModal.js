@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import ico_close from "../../../images/ico_close.png";
-import {
-  onChangeSignInHandler,
-  onClickLoginButton,
-} from "./SignInModalHandlers";
+import { signInApi } from "../../../api/SignInApi";
+import { signInObject } from "../../../utills/message";
+import { onChangeUserDataHandler } from "../../../utills/onChangeUserData";
 
 const SignInModal = (props) => {
   const [userData, setUserData] = useState({
@@ -16,6 +15,45 @@ const SignInModal = (props) => {
   const { isSignInModal, setIsSignInModal, openSignUpModal, setIsLoggedIn } =
     props;
   const navigate = useNavigate();
+  const {
+    notUserDataInput,
+    signInSuccess,
+    signInCode401,
+    signInCode500,
+    signInError,
+    signInCatchError,
+  } = signInObject;
+
+  const onClickSignInButton = async (e, userData, setIsLoggedIn, navigate) => {
+    e.preventDefault();
+    if (!userData.userId || !userData.userPw) {
+      alert(notUserDataInput);
+      return;
+    }
+    //   console.log("로그인 요청 전:", userData);
+    try {
+      const res = await signInApi(userData);
+      // console.log("로그인 응답:", res);
+      if (res) {
+        if (res.code === 200) {
+          alert(signInSuccess);
+          localStorage.setItem("userId", userData.userId);
+          setIsLoggedIn(true);
+          navigate("/notice-board");
+        } else if (res.code === 401) {
+          alert(signInCode401);
+        } else if (res.code === 500) {
+          alert(signInCode500);
+        }
+      } else {
+        //   console.error("로그인에 실패했습니다. 서버 응답이 없습니다.");
+        alert(signInError);
+      }
+    } catch (error) {
+      // console.error("에러가 발생했습니다:", error);
+      alert(signInCatchError);
+    }
+  };
 
   return (
     <SignInModalWrap isSignInModal={isSignInModal}>
@@ -24,14 +62,14 @@ const SignInModal = (props) => {
         src={ico_close}
         alt="닫기"
       />
-      <LoginWrap>
-        <LoginTitle>Sign In</LoginTitle>
+      <SignInContainer>
+        <SignInTitle>Sign In</SignInTitle>
         <form
           onSubmit={(e) =>
-            onClickLoginButton(e, userData, setIsLoggedIn, navigate)
+            onClickSignInButton(e, userData, setIsLoggedIn, navigate)
           }
         >
-          <LoginInputWrap>
+          <SignInInputWrap>
             {SIGN_IN_INPUT.map((input) => (
               <LoginInput
                 key={input.name}
@@ -39,19 +77,19 @@ const SignInModal = (props) => {
                 name={input.name}
                 placeholder={input.placeholder}
                 value={userData[input.name]}
-                onChange={(e) => onChangeSignInHandler(e, setUserData)}
+                onChange={(e) => onChangeUserDataHandler(e, setUserData)}
               />
             ))}
-          </LoginInputWrap>
-          <LoginSignInButton type="submit">Sign In</LoginSignInButton>
+          </SignInInputWrap>
+          <SignInButton type="submit">Sign In</SignInButton>
         </form>
-        <LoginSignUp>
-          <LoginSignUpText>회원이 아니신가요?</LoginSignUpText>
-          <LoginSignUpButton onClick={openSignUpModal}>
+        <NoUserContents>
+          <NoUserSignUpText>회원이 아니신가요?</NoUserSignUpText>
+          <GoToSignUpButton onClick={openSignUpModal}>
             가입하기
-          </LoginSignUpButton>
-        </LoginSignUp>
-      </LoginWrap>
+          </GoToSignUpButton>
+        </NoUserContents>
+      </SignInContainer>
     </SignInModalWrap>
   );
 };
@@ -114,13 +152,13 @@ const ModalCloseButton = styled.img`
   }
 `;
 
-const LoginWrap = styled.div`
+const SignInContainer = styled.div`
   margin: 130px 180px;
 
   text-align: center;
 `;
 
-const LoginTitle = styled.h1`
+const SignInTitle = styled.h1`
   font-size: 36px;
   color: #66bacf;
 
@@ -128,7 +166,7 @@ const LoginTitle = styled.h1`
   text-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
 `;
 
-const LoginInputWrap = styled.div`
+const SignInInputWrap = styled.div`
   margin-top: 30px;
 `;
 
@@ -147,7 +185,7 @@ const LoginInput = styled.input`
   }
 `;
 
-const LoginSignInButton = styled.button`
+const SignInButton = styled.button`
   margin-top: 10px;
   padding: 4px;
 
@@ -174,7 +212,7 @@ const LoginSignInButton = styled.button`
   }
 `;
 
-const LoginSignUp = styled.section`
+const NoUserContents = styled.section`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -183,12 +221,12 @@ const LoginSignUp = styled.section`
   gap: 16px;
 `;
 
-const LoginSignUpText = styled.section`
+const NoUserSignUpText = styled.section`
   font-size: 14px;
   font-style: italic;
 `;
 
-const LoginSignUpButton = styled.button`
+const GoToSignUpButton = styled.button`
   padding: 5px 14px;
 
   background-color: #ffc338;

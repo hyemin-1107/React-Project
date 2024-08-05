@@ -1,6 +1,6 @@
 import axiosInstance from "../axios/axiosInstance";
 
-export const createBoard = async (formUserData) => {
+export const createNewBoardApi = async (formUserData) => {
   try {
     const response = await axiosInstance.post("/board/", formUserData);
 

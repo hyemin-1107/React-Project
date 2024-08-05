@@ -35,7 +35,7 @@ const MainContent = (props) => {
         </div>
       </MainText>
       {isLoggedIn ? (
-        <LoginButtonWrap>
+        <SignInButtonWrap>
           <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
           <LogoutButton
             onClick={() =>
@@ -44,20 +44,20 @@ const MainContent = (props) => {
           >
             내 정보 수정
           </LogoutButton>
-        </LoginButtonWrap>
+        </SignInButtonWrap>
       ) : (
-        <LoginButtonWrap>
-          <LoginButton
+        <SignInButtonWrap>
+          <SignInButton
             onClick={() => onClickModal(isSignUpModal, setIsSignUpModal)}
           >
             Sign up
-          </LoginButton>
-          <LoginButton
+          </SignInButton>
+          <SignInButton
             onClick={() => onClickModal(isSignInModal, setIsSignInModal)}
           >
             Sign in
-          </LoginButton>
-        </LoginButtonWrap>
+          </SignInButton>
+        </SignInButtonWrap>
       )}
     </>
   );
@@ -114,7 +114,7 @@ const LogoMain = styled.h2`
   }
 `;
 
-const LoginButtonWrap = styled.section`
+const SignInButtonWrap = styled.section`
   display: flex;
   justify-content: center;
 
@@ -122,7 +122,7 @@ const LoginButtonWrap = styled.section`
   gap: 46px;
 `;
 
-const LoginButton = styled.button`
+const SignInButton = styled.button`
   padding: 15px 45px;
 
   background-color: #ffc338;

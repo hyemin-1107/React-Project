@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import ico_close from "../../../images/ico_close.png";
-import {
-  onChangeSignUpHandler,
-  onClickSignUpButton,
-} from "./SignUpModalHandlers";
+import { signUpApi } from "../../../api/SignUpApi";
+import { signUpObject } from "../../../utills/message";
+import { onChangeUserDataHandler } from "../../../utills/onChangeUserData";
 
 const SignUpModal = (props) => {
   const [userData, setUserData] = useState({
@@ -14,8 +13,45 @@ const SignUpModal = (props) => {
     confirmPassword: "",
   });
   const { isSignUpModal, setIsSignUpModal } = props;
+  const {
+    signUpSuccess,
+    signUpCode500,
+    signUpPwMismatch,
+    signUpError,
+    signUpCatchError,
+  } = signUpObject;
+  const onClickSignUpButton = async (userData, setIsSignUpModal) => {
+    const { userId, birth, userPw, confirmPassword } = userData;
+    const passwordCheck = userPw === confirmPassword;
 
-  const signUpCallBackFunction = () => {
+    try {
+      if (
+        userId !== "" &&
+        birth !== "" &&
+        userPw !== "" &&
+        passwordCheck === true
+      ) {
+        const userDataForApi = { userId, userPw, birth };
+        const res = await signUpApi(userDataForApi);
+        //   console.log(res.data);
+        if (res.code === 200) {
+          alert(signUpSuccess);
+          setIsSignUpModal(false);
+        } else if (res.code === 500) {
+          alert(signUpCode500);
+        }
+      } else if (userId !== "" && birth !== "" && passwordCheck === false) {
+        alert(signUpPwMismatch);
+      } else {
+        alert(signUpError);
+      }
+    } catch (error) {
+      // console.error("가입에 실패했습니다:", error);
+      alert(signUpCatchError);
+    }
+  };
+
+  const userDataFunction = () => {
     if (isSignUpModal) {
       setUserData({
         userId: "",
@@ -27,7 +63,7 @@ const SignUpModal = (props) => {
   };
 
   useEffect(() => {
-    signUpCallBackFunction();
+    userDataFunction();
   }, [isSignUpModal]);
 
   return (
@@ -50,7 +86,7 @@ const SignUpModal = (props) => {
               name={input.name}
               placeholder={input.placeholder}
               value={userData[input.name]}
-              onChange={(e) => onChangeSignUpHandler(e, setUserData)}
+              onChange={(e) => onChangeUserDataHandler(e, setUserData)}
             ></input>
           </div>
         ))}

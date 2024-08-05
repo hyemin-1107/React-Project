@@ -3,13 +3,13 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 // import { onClickModal } from "../../utills/onClickModal";
 // import { format } from "date-fns";
-import { fetchBoardList } from "../../api/BoardListApi";
-import { fetchBoardDetail } from "../../api/BoardDetailApi";
+import { fetchBoardListApi } from "../../api/BoardListApi";
+import { fetchBoardDetailApi } from "../../api/BoardDetailApi";
+import { noticeBoardObject } from "../../utills/message";
 import HeaderContents from "../../components/HeaderContents";
 import BoardDetailView from "./components/BoardDetailView";
 import Pagination from "./components/Pagination";
 import BoardListContainer from "./components/BoardListContainer";
-import { noticeBoardObject } from "../../utills/message";
 
 const NoticeBoard = () => {
   const [isBoardDetailModal, setIsBoardDetailModal] = useState(false);
@@ -30,13 +30,13 @@ const NoticeBoard = () => {
   };
 
   const { fetchBoardError, boardDetailError } = noticeBoardObject;
-  const fetchBoard = async () => {
+  const fetchAllBoardList = async () => {
     const limit = limitButton;
     const offset = (page - 1) * limitButton;
     const userId = localStorage.getItem("userId");
 
     try {
-      const response = await fetchBoardList(offset, limit, userId);
+      const response = await fetchBoardListApi(offset, limit, userId);
       if (response) {
         setBoardList(response.boardList);
         setTotalPages(response.totalPages);
@@ -49,7 +49,7 @@ const NoticeBoard = () => {
 
   const openBoardDetailModal = async (boardId) => {
     try {
-      const boardDetail = await fetchBoardDetail(boardId);
+      const boardDetail = await fetchBoardDetailApi(boardId);
       setSelectedBoard(boardDetail);
       setIsBoardDetailModal(true);
     } catch (error) {
@@ -67,7 +67,7 @@ const NoticeBoard = () => {
   };
 
   useEffect(() => {
-    fetchBoard();
+    fetchAllBoardList();
   }, [page]);
 
   return (
@@ -79,39 +79,48 @@ const NoticeBoard = () => {
         selectedBoard={selectedBoard}
         onClickCloseButton={closeBoardDetailModal}
       />
-      <BoardListContainer
-        boardList={boardList}
-        openBoardDetailModal={openBoardDetailModal}
-        formattedDate={formattedDate}
-      />
-      <CreateButtonWrap>
-        <Pagination
-          handlePageChange={handlePageChange}
-          page={page}
-          totalPages={totalPages}
+      <ContentContainer>
+        <BoardListContainer
+          boardList={boardList}
+          openBoardDetailModal={openBoardDetailModal}
+          formattedDate={formattedDate}
         />
-        <NavigateToCreateBoard onClick={onClickNavigateToCreateBoardButton}>
-          게시물 올리기
-        </NavigateToCreateBoard>
-      </CreateButtonWrap>
-      <BoardDetailView
-        isBoardDetailModal={isBoardDetailModal}
-        selectedBoard={selectedBoard}
-        onClickCloseButton={closeBoardDetailModal}
-      />
+        <BoardDetailView
+          isBoardDetailModal={isBoardDetailModal}
+          selectedBoard={selectedBoard}
+          onClickCloseButton={closeBoardDetailModal}
+        />
+        <CreateButtonWrap>
+          <Pagination
+            handlePageChange={handlePageChange}
+            page={page}
+            totalPages={totalPages}
+          />
+          <NavigateToCreateBoard onClick={onClickNavigateToCreateBoardButton}>
+            게시물 올리기
+          </NavigateToCreateBoard>
+        </CreateButtonWrap>
+      </ContentContainer>
     </>
   );
 };
 
 export default NoticeBoard;
 
-const CreateButtonWrap = styled.section`
+const ContentContainer = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
 
   margin: 0 auto;
 
   width: 900px;
+`;
+
+const CreateButtonWrap = styled.section`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
 `;
 
 const NavigateToCreateBoard = styled.button`

@@ -18,13 +18,13 @@ const MainPage = () => {
   };
 
   const token = localStorage.getItem("token");
-  const logoutCallBackfunction = () => {
+  const signInAddToken = () => {
     if (token) {
       setIsLoggedIn(true);
     }
   };
   useEffect(() => {
-    logoutCallBackfunction();
+    signInAddToken();
   }, []);
 
   const handleLogout = () => {

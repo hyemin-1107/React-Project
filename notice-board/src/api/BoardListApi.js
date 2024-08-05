@@ -1,6 +1,6 @@
 import axiosInstance from "../axios/axiosInstance";
 
-export const fetchBoardList = async (offset, limit, userId) => {
+export const fetchBoardListApi = async (offset, limit, userId) => {
   try {
     const response = await axiosInstance.get(`/board/list`, {
       params: {

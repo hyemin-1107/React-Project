@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import {
   // fetchBoardDetail,
-  fetchComments,
-  postComment,
-  updateComment,
-  deleteComment,
+  fetchCommentsApi,
+  postCommentApi,
+  updateCommentApi,
+  deleteCommentApi,
 } from "../../../api/BoardDetailApi";
 import ico_close from "../../../images/ico_close.png";
 import CommentList from "./CommentList";
@@ -40,7 +40,7 @@ const BoardDetailView = (props) => {
 
   const updateCommentsList = async (boardId) => {
     try {
-      const updatedComments = await fetchComments(boardId);
+      const updatedComments = await fetchCommentsApi(boardId);
       setComments(updatedComments);
       // console.log("Updated Comments:", updatedComments);
     } catch (error) {
@@ -51,7 +51,7 @@ const BoardDetailView = (props) => {
 
   const handleUpdateComment = async () => {
     try {
-      await updateComment(editingCommentId, editingContent);
+      await updateCommentApi(editingCommentId, editingContent);
       await updateCommentsList(selectedBoard.boardId);
       setEditingCommentId(null);
       setEditingContent("");
@@ -63,7 +63,7 @@ const BoardDetailView = (props) => {
 
   const handleDeleteComment = async (commentId) => {
     try {
-      await deleteComment(commentId);
+      await deleteCommentApi(commentId);
       await updateCommentsList(selectedBoard.boardId);
     } catch (error) {
       // console.error("댓글 삭제에 실패했습니다.", error);
@@ -78,7 +78,10 @@ const BoardDetailView = (props) => {
 
   const handlePostComment = async () => {
     try {
-      const newComment = await postComment(selectedBoard.boardId, inputComment);
+      const newComment = await postCommentApi(
+        selectedBoard.boardId,
+        inputComment,
+      );
       setComments([...comments, newComment]);
       setInputComment("");
     } catch (error) {
@@ -95,6 +98,7 @@ const BoardDetailView = (props) => {
     return null; // selectedBoard가 없으면 아무것도 렌더링하지 않음
   }
   console.log("Image Source:", selectedBoard.imagePath);
+
   return (
     <Wrap isBoardDetailModal={isBoardDetailModal}>
       <BoardDetailViewContainer>

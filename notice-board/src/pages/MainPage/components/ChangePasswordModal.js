@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { changePassword } from "../../../api/PasswordChangeApi";
-import ico_close from "../../../images/ico_close.png";
+import { PwChangeUpdateApi } from "../../../api/PasswordChangeApi";
 import { pwChangeObject } from "../../../utills/message";
+import ico_close from "../../../images/ico_close.png";
 
 const ChangePasswordModal = (props) => {
   const [passwordData, setPasswordData] = useState({
@@ -21,24 +21,24 @@ const ChangePasswordModal = (props) => {
     });
   };
 
-  const { success, error, catchError } = pwChangeObject;
+  const { pwChangeSuccess, pwChangeError, pwChangeCatchError } = pwChangeObject;
   const onClickPasswordChange = async () => {
     const { userId, userPw, newUserPw, confirmUserPw } = passwordData;
     try {
-      const res = await changePassword({
+      const res = await PwChangeUpdateApi({
         userId,
         userPw,
         newUserPw,
         confirmUserPw,
       });
       if (res.code === 200) {
-        alert(success);
+        alert(pwChangeSuccess);
         setIsProfileUpdateModal(false);
       } else {
-        alert(error);
+        alert(pwChangeError);
       }
     } catch (error) {
-      alert(catchError);
+      alert(pwChangeCatchError);
       console.log(error.message);
     }
   };

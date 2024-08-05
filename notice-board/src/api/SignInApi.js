@@ -1,6 +1,6 @@
 import axiosInstance from "../axios/axiosInstance";
 
-export const signIn = async (userData) => {
+export const signInApi = async (userData) => {
   try {
     const res = await axiosInstance.post("/user/", userData);
     const token = res.data.data;

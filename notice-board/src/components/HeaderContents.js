@@ -14,15 +14,15 @@ const HeaderContents = () => {
   return (
     <Header>
       <HeaderWrap>
-        <Logo onClick={navigateToMain}>
+        <LogoContents onClick={navigateToMain}>
           <LogoIco src={ico_sun} />
           <div>Daily Record</div>
-        </Logo>
-        <Nav>
+        </LogoContents>
+        <Gnb>
           <ul>
             <li onClick={navigateToBoard}>Board</li>
           </ul>
-        </Nav>
+        </Gnb>
       </HeaderWrap>
     </Header>
   );
@@ -53,7 +53,7 @@ const HeaderWrap = styled.div`
   cursor: pointer;
 `;
 
-const Logo = styled.h1`
+const LogoContents = styled.h1`
   display: flex;
   align-items: center;
   gap: 4px;
@@ -71,7 +71,7 @@ const LogoIco = styled.img`
   width: 36px;
 `;
 
-const Nav = styled.nav`
+const Gnb = styled.nav`
   ul {
     display: flex;
 
