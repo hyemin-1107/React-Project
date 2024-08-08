@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import ico_close from "../../../images/ico_close.png";
-import { signInApi } from "../../../api/SignInApi";
+import { signInApi } from "../../../api/signInApi";
 import { signInObject } from "../../../utills/message";
 import { onChangeUserDataHandler } from "../../../utills/onChangeUserData";
 
@@ -15,15 +15,15 @@ const SignInModal = (props) => {
   const { isSignInModal, setIsSignInModal, openSignUpModal, setIsLoggedIn } =
     props;
   const navigate = useNavigate();
+
   const {
+    signInCatchError,
     notUserDataInput,
     signInSuccess,
     signInCode401,
     signInCode500,
     signInError,
-    signInCatchError,
   } = signInObject;
-
   const onClickSignInButton = async (e, userData, setIsLoggedIn, navigate) => {
     e.preventDefault();
     if (!userData.userId || !userData.userPw) {
@@ -54,7 +54,6 @@ const SignInModal = (props) => {
       alert(signInCatchError);
     }
   };
-
   return (
     <SignInModalWrap isSignInModal={isSignInModal}>
       <ModalCloseButton

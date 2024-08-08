@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { createNewBoardApi } from "../../api/CreateBoardApi";
+import { createNewBoardApi } from "../../api/createBoardApi";
 import { createBoardObject } from "../../utills/message";
 import HeaderContents from "../../components/HeaderContents";
 import CreateBoardForm from "./components/CreateBoardForm";
@@ -76,7 +76,8 @@ const CreateBoard = () => {
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
 
-  const signInUnToken = () => {
+  //함수명변경
+  const checkAuthentication = () => {
     if (!token) {
       navigate("/");
       alert("로그인 후 이용해주세요");
@@ -89,7 +90,7 @@ const CreateBoard = () => {
   };
 
   useEffect(() => {
-    signInUnToken();
+    checkAuthentication();
   }, [navigate]);
 
   return (

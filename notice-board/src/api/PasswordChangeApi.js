@@ -1,6 +1,6 @@
 import axiosInstance from "../axios/axiosInstance";
 
-export const PwChangeUpdateApi = async (passwordData) => {
+export const pwChangeUpdateApi = async (passwordData) => {
   const { userPw, newUserPw } = passwordData;
   try {
     const response = await axiosInstance.put("/user/", {

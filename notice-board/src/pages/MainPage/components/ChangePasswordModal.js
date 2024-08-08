@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { PwChangeUpdateApi } from "../../../api/PasswordChangeApi";
+import { pwChangeUpdateApi } from "../../../api/passwordChangeApi";
 import { pwChangeObject } from "../../../utills/message";
 import ico_close from "../../../images/ico_close.png";
 
@@ -25,7 +25,7 @@ const ChangePasswordModal = (props) => {
   const onClickPasswordChange = async () => {
     const { userId, userPw, newUserPw, confirmUserPw } = passwordData;
     try {
-      const res = await PwChangeUpdateApi({
+      const res = await pwChangeUpdateApi({
         userId,
         userPw,
         newUserPw,

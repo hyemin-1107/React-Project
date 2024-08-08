@@ -6,7 +6,7 @@ import {
   postCommentApi,
   updateCommentApi,
   deleteCommentApi,
-} from "../../../api/BoardDetailApi";
+} from "../../../api/boardDetailApi";
 import ico_close from "../../../images/ico_close.png";
 import CommentList from "./CommentList";
 import { commentObject } from "../../../utills/message";
