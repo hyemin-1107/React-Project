@@ -1,27 +1,37 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-// import { onClickModal } from "../../utills/onClickModal";
-// import { format } from "date-fns";
 import { fetchBoardListApi } from "../../api/boardListApi";
-import { fetchBoardDetailApi } from "../../api/boardDetailApi";
+import {
+  fetchBoardDetailApi,
+  fetchCommentsApi,
+} from "../../api/boardDetailApi";
 import { noticeBoardObject } from "../../utills/message";
 import HeaderContents from "../../components/HeaderContents";
 import BoardDetailView from "./components/BoardDetailView";
-import Pagination from "./components/Pagination";
 import BoardListContainer from "./components/BoardListContainer";
+// import CommentList from "./components/CommentList";
+import CustomPagination from "./components/Pagination";
 
 const NoticeBoard = () => {
   const [isBoardDetailModal, setIsBoardDetailModal] = useState(false);
   const [selectedBoard, setSelectedBoard] = useState(null);
   const [boardList, setBoardList] = useState([]);
   const [page, setPage] = useState(1);
+  const [comments, setComments] = useState([]);
   const [totalPages, setTotalPages] = useState();
 
   const limitButton = 6;
   const navigate = useNavigate();
   const onClickNavigateToCreateBoardButton = () => {
     navigate("/create-board");
+  };
+
+  const fetchComments = async (boardId) => {
+    const commentData = await fetchCommentsApi(boardId);
+    if (commentData) {
+      setComments(commentData); // 댓글 데이터 설정
+    }
   };
 
   const formattedDate = (dateString) => {
@@ -33,10 +43,9 @@ const NoticeBoard = () => {
   const fetchAllBoardList = async () => {
     const limit = limitButton;
     const offset = (page - 1) * limitButton;
-    const userId = localStorage.getItem("userId");
 
     try {
-      const response = await fetchBoardListApi(offset, limit, userId);
+      const response = await fetchBoardListApi(offset, limit);
       if (response) {
         setBoardList(response.boardList);
         setTotalPages(response.totalPages);
@@ -52,6 +61,7 @@ const NoticeBoard = () => {
       const boardDetail = await fetchBoardDetailApi(boardId);
       setSelectedBoard(boardDetail);
       setIsBoardDetailModal(true);
+      fetchComments(boardId);
     } catch (error) {
       // console.error("게시판 상세 정보를 가져오는데 실패했습니다:", error);
       alert(boardDetailError);
@@ -91,7 +101,7 @@ const NoticeBoard = () => {
           onClickCloseButton={closeBoardDetailModal}
         />
         <CreateButtonWrap>
-          <Pagination
+          <CustomPagination
             handlePageChange={handlePageChange}
             page={page}
             totalPages={totalPages}

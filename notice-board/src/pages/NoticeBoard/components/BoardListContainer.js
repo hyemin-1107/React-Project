@@ -40,7 +40,7 @@ const BoardContainer = styled.div`
 `;
 
 const Section = styled.section`
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 
   width: 32%;
 
