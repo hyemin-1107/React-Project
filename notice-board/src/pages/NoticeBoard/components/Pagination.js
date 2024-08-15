@@ -3,15 +3,16 @@ import Pagination from "react-js-pagination";
 import styled from "styled-components";
 
 const CustomPagination = (props) => {
-  const { handlePageChange, page, totalPages } = props;
+  const { handlePageChange, page, limit } = props;
+  const totalPage = Math.ceil(100 / limit);
 
   return (
     <PaginationWrapper>
       <Pagination
         activePage={page}
-        itemsCountPerPage={6} // 페이지 당 보여줄 아이템 수
-        totalItemsCount={totalPages} // 전체 페이지 수
-        pageRangeDisplayed={5} // 한 번에 보여줄 페이지 범위
+        itemsCountPerPage={limit} // 페이지 당 보여줄 아이템 수
+        totalItemsCount={totalPage} // 전체 페이지 수
+        pageRangeDisplayed={Math.min(5, totalPage)} // 한 번에 보여줄 페이지 범위
         onChange={handlePageChange} // 페이지 변경 시 호출될 함수
         prevPageText={"이전"}
         nextPageText={"다음"}
@@ -26,7 +27,17 @@ const PaginationWrapper = styled.div`
   .pagination {
     display: flex;
     justify-content: center;
+
     margin-top: 15px;
+  }
+
+  ul.pagination {
+    display: flex;
+
+    li:first-child,
+    li:last-child {
+      display: none;
+    }
   }
 
   ul.pagination li {
@@ -36,7 +47,6 @@ const PaginationWrapper = styled.div`
     height: 36px;
 
     border: 1px solid #666;
-
     border-radius: 50%;
     cursor: pointer;
   }
@@ -52,26 +62,21 @@ const PaginationWrapper = styled.div`
     color: #fff;
     background-color: #66bacf;
     border-radius: 50%;
-
-    &:hover {
-      background-color: #fff;
-      border-color: #66bacf;
-      color: #66bacf;
-    }
   }
 
-  /* ul.pagination li.active {
-    background-color: #337ab7;
-    border-color: #337ab7;
+  ul.pagination li a:hover {
+    background-color: #fff;
+    border-color: #66bacf;
+    color: #66bacf;
+  }
+
+  ul.pagination li.active {
+    background-color: #fff;
+    pointer-events: none;
   }
 
   ul.pagination li.active a {
-    color: white;
-  } */
-
-  /* .page-selection {
-    width: 48px;
-    height: 30px;
-    color: #337ab7;
-  } */
+    color: #66bacf;
+    background-color: #fff;
+  }
 `;

@@ -18,10 +18,11 @@ const NoticeBoard = () => {
   const [selectedBoard, setSelectedBoard] = useState(null);
   const [boardList, setBoardList] = useState([]);
   const [page, setPage] = useState(1);
-  const [comments, setComments] = useState([]);
-  const [totalPages, setTotalPages] = useState();
+  // const [totalItemsCount, setTotalItemsCount] = useState(0);
 
-  const limitButton = 6;
+  const limit = 6;
+  const offset = (page - 1) * limit;
+
   const navigate = useNavigate();
   const onClickNavigateToCreateBoardButton = () => {
     navigate("/create-board");
@@ -30,7 +31,7 @@ const NoticeBoard = () => {
   const fetchComments = async (boardId) => {
     const commentData = await fetchCommentsApi(boardId);
     if (commentData) {
-      setComments(commentData); // 댓글 데이터 설정
+      // setComments(commentData);  댓글 데이터 설정
     }
   };
 
@@ -41,14 +42,10 @@ const NoticeBoard = () => {
 
   const { fetchBoardError, boardDetailError } = noticeBoardObject;
   const fetchAllBoardList = async () => {
-    const limit = limitButton;
-    const offset = (page - 1) * limitButton;
-
     try {
       const response = await fetchBoardListApi(offset, limit);
       if (response) {
         setBoardList(response.boardList);
-        setTotalPages(response.totalPages);
       }
     } catch (error) {
       // console.error("게시판 리스트를 가져오는데 실패했습니다:", error.message);
@@ -74,6 +71,7 @@ const NoticeBoard = () => {
 
   const handlePageChange = (pageNumber) => {
     setPage(pageNumber);
+    fetchAllBoardList();
   };
 
   useEffect(() => {
@@ -104,7 +102,8 @@ const NoticeBoard = () => {
           <CustomPagination
             handlePageChange={handlePageChange}
             page={page}
-            totalPages={totalPages}
+            // totalItemsCount={totalItemsCount}
+            limit={limit}
           />
           <NavigateToCreateBoard onClick={onClickNavigateToCreateBoardButton}>
             게시물 올리기

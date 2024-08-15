@@ -6,15 +6,12 @@ export const fetchBoardListApi = async (offset, limit, userId) => {
       params: {
         offset,
         limit,
-        userId,
       },
     });
-    // const responseData = response.data;
     if (response.status === 200) {
       console.log(response);
       return {
         boardList: response.data.data,
-        // totalItems: response.data.totalItems,
       };
     } else {
       console.error("예상치 못한 상태 코드:", response.status);
