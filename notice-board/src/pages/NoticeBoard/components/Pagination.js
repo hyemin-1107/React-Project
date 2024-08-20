@@ -3,15 +3,15 @@ import Pagination from "react-js-pagination";
 import styled from "styled-components";
 
 const CustomPagination = (props) => {
-  const { handlePageChange, page, limit } = props;
-  const totalPage = Math.ceil(100 / limit);
+  const { handlePageChange, page, limit, totalItemsCount } = props;
+  const totalPage = Math.ceil(totalItemsCount / limit);
 
   return (
     <PaginationWrapper>
       <Pagination
         activePage={page}
         itemsCountPerPage={limit} // 페이지 당 보여줄 아이템 수
-        totalItemsCount={totalPage} // 전체 페이지 수
+        totalItemsCount={totalItemsCount}
         pageRangeDisplayed={Math.min(5, totalPage)} // 한 번에 보여줄 페이지 범위
         onChange={handlePageChange} // 페이지 변경 시 호출될 함수
         prevPageText={"이전"}

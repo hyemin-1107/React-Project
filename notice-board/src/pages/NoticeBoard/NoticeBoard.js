@@ -18,7 +18,7 @@ const NoticeBoard = () => {
   const [selectedBoard, setSelectedBoard] = useState(null);
   const [boardList, setBoardList] = useState([]);
   const [page, setPage] = useState(1);
-  // const [totalItemsCount, setTotalItemsCount] = useState(0);
+  const [totalItemsCount, setTotalItemsCount] = useState(0);
 
   const limit = 6;
   const offset = (page - 1) * limit;
@@ -43,9 +43,12 @@ const NoticeBoard = () => {
   const { fetchBoardError, boardDetailError } = noticeBoardObject;
   const fetchAllBoardList = async () => {
     try {
+      console.log("Current page", page);
+      console.log("Offset", offset, "Limit", limit);
       const response = await fetchBoardListApi(offset, limit);
       if (response) {
         setBoardList(response.boardList);
+        setTotalItemsCount(response.totalCount);
       }
     } catch (error) {
       // console.error("게시판 리스트를 가져오는데 실패했습니다:", error.message);
@@ -102,7 +105,7 @@ const NoticeBoard = () => {
           <CustomPagination
             handlePageChange={handlePageChange}
             page={page}
-            // totalItemsCount={totalItemsCount}
+            totalItemsCount={totalItemsCount}
             limit={limit}
           />
           <NavigateToCreateBoard onClick={onClickNavigateToCreateBoardButton}>

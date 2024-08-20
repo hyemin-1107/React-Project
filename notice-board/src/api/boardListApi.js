@@ -1,6 +1,6 @@
 import axiosInstance from "../axios/axiosInstance";
 
-export const fetchBoardListApi = async (offset, limit, userId) => {
+export const fetchBoardListApi = async (offset, limit) => {
   try {
     const response = await axiosInstance.get(`/board/list`, {
       params: {
@@ -9,9 +9,10 @@ export const fetchBoardListApi = async (offset, limit, userId) => {
       },
     });
     if (response.status === 200) {
-      console.log(response);
+      console.log("API", response.data);
       return {
         boardList: response.data.data,
+        totalCount: response.data.totalCount,
       };
     } else {
       console.error("예상치 못한 상태 코드:", response.status);
