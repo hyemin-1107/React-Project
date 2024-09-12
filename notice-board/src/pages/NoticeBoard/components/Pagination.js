@@ -62,6 +62,12 @@ const PaginationWrapper = styled.div`
     color: #fff;
     background-color: #66bacf;
     border-radius: 50%;
+
+    box-shadow:
+      inset 0px -2px 8px rgba(0, 0, 0, 0.1),
+      2px 3px 10px rgba(0, 0, 0, 0.1);
+
+    transition: 0.2s;
   }
 
   ul.pagination li a:hover {

@@ -19,14 +19,16 @@ export const fetchBoardDetailApi = async (boardId) => {
 export const fetchCommentsApi = async (boardId) => {
   try {
     const response = await axiosInstance.get(`/comment/${boardId}`);
-    console.log("API Response Comment:", response.data);
+    console.log("API Response Comment", response.data);
     if (response.data.code === 200) {
       return response.data.data;
     } else {
       console.error("댓글 목록을 가져오는데 실패했습니다");
+      return [];
     }
   } catch (error) {
     console.error("댓글 목록을 가져오는데 실패했습니다", error);
+    return [];
   }
 };
 

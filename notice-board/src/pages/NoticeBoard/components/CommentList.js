@@ -18,9 +18,9 @@ const CommentList = (props) => {
     <CommentListContainer>
       {comments &&
         comments.length > 0 &&
-        comments.map((data) => (
-          <CommentItem key={data}>
-            {editingCommentId === data ? (
+        comments.map((data, index) => (
+          <CommentItem key={data.commentId || index}>
+            {editingCommentId === data.commentId ? (
               <>
                 <input
                   value={editingContent}

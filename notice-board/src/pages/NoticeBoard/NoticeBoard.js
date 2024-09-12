@@ -21,7 +21,7 @@ const NoticeBoard = () => {
   const [totalItemsCount, setTotalItemsCount] = useState(0);
 
   const limit = 6;
-  const offset = (page - 1) * limit;
+  const offset = page - 1;
 
   const navigate = useNavigate();
   const onClickNavigateToCreateBoardButton = () => {
