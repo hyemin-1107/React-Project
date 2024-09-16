@@ -73,8 +73,8 @@ const CreateBoard = () => {
     }
   };
 
-  const token = localStorage.getItem("token");
-  const userId = localStorage.getItem("userId");
+  const token = sessionStorage.getItem("token");
+  const userId = sessionStorage.getItem("userId");
 
   //함수명변경
   const checkAuthentication = () => {

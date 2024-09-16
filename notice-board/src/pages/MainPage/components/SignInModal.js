@@ -24,6 +24,7 @@ const SignInModal = (props) => {
     signInCode500,
     signInError,
   } = signInObject;
+
   const onClickSignInButton = async (e, userData, setIsLoggedIn, navigate) => {
     e.preventDefault();
     if (!userData.userId || !userData.userPw) {
@@ -37,7 +38,7 @@ const SignInModal = (props) => {
       if (res) {
         if (res.code === 200) {
           alert(signInSuccess);
-          localStorage.setItem("userId", userData.userId);
+          sessionStorage.setItem("userId", userData.userId);
           setIsLoggedIn(true);
           navigate("/notice-board");
         } else if (res.code === 401) {

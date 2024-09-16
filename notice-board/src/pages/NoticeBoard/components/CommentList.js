@@ -16,44 +16,40 @@ const CommentList = (props) => {
 
   return (
     <CommentListContainer>
-      {comments &&
-        comments.length > 0 &&
-        comments.map((data, index) => (
-          <CommentItem key={data.commentId || index}>
-            {editingCommentId === data.commentId ? (
-              <>
-                <input
-                  value={editingContent}
-                  onChange={(e) => setEditingContent(e.target.value)}
-                />
-                <button onClick={handleUpdateComment}>Update</button>
-                <button onClick={() => setEditingCommentId(null)}>
-                  Cancel
-                </button>
-              </>
-            ) : (
-              <>
-                <p>{data.content}</p>
-                <span>{data.comment}</span>
-                <span>{data.createAt}</span>
-                {data.userId === token && (
-                  <>
-                    <button
-                      onClick={() =>
-                        handleEditComment(data.commentId, data.content)
-                      }
-                    >
-                      Edit
-                    </button>
-                    <button onClick={() => handleDeleteComment(data.commentId)}>
-                      Delete
-                    </button>
-                  </>
-                )}
-              </>
-            )}
-          </CommentItem>
-        ))}
+      {comments.map((data) => (
+        <CommentItem key={data.commentId}>
+          {editingCommentId === data.commentId ? (
+            <>
+              <input
+                value={editingContent}
+                onChange={(e) => setEditingContent(e.target.value)}
+              />
+              <button onClick={handleUpdateComment}>Update</button>
+              <button onClick={() => setEditingCommentId(null)}>Cancel</button>
+            </>
+          ) : (
+            <>
+              <p>{data.content}</p>
+              <span>{data.comment}</span>
+              <span>{data.createAt}</span>
+              {data.userId === token && (
+                <>
+                  <button
+                    onClick={() =>
+                      handleEditComment(data.commentId, data.content)
+                    }
+                  >
+                    Edit
+                  </button>
+                  <button onClick={() => handleDeleteComment(data.commentId)}>
+                    Delete
+                  </button>
+                </>
+              )}
+            </>
+          )}
+        </CommentItem>
+      ))}
     </CommentListContainer>
   );
 };

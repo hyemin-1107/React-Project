@@ -17,8 +17,8 @@ const MainPage = () => {
     setIsSignInModal(false);
   };
 
-  const token = localStorage.getItem("token");
   const signInAddToken = () => {
+    const token = sessionStorage.getItem("token");
     if (token) {
       setIsLoggedIn(true);
     }
@@ -28,9 +28,24 @@ const MainPage = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); // 토큰 삭제
+    sessionStorage.removeItem("token");
     setIsLoggedIn(false);
   };
+
+  const handleUnload = () => {
+    // 탭이 닫힐 때만 로그아웃 처리
+    if (!sessionStorage.getItem("isSessionActive")) {
+      sessionStorage.removeItem("token");
+    }
+  };
+
+  useEffect(() => {
+    sessionStorage.setItem("isSessionActive", "true");
+
+    return () => {
+      window.removeEventListener("beforeunload", handleUnload);
+    };
+  }, []);
 
   return (
     <>

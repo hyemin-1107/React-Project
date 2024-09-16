@@ -20,6 +20,7 @@ const SignUpModal = (props) => {
     signUpError,
     signUpCatchError,
   } = signUpObject;
+
   const onClickSignUpButton = async (userData, setIsSignUpModal) => {
     const { userId, birth, userPw, confirmPassword } = userData;
     const passwordCheck = userPw === confirmPassword;
