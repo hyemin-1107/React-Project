@@ -32,15 +32,16 @@ const MainPage = () => {
     setIsLoggedIn(false);
   };
 
-  const handleUnload = () => {
-    // 탭이 닫힐 때만 로그아웃 처리
-    if (!sessionStorage.getItem("isSessionActive")) {
+  const handleUnload = (event) => {
+    // 새로고침과 탭 닫기를 구분하기 위해 event.returnValue를 사용
+    // 새로고침 시에는 sessionStorage에서 token을 삭제하지 않음
+    if (!event.returnValue) {
       sessionStorage.removeItem("token");
     }
   };
 
   useEffect(() => {
-    sessionStorage.setItem("isSessionActive", "true");
+    window.addEventListener("beforeunload", handleUnload);
 
     return () => {
       window.removeEventListener("beforeunload", handleUnload);
