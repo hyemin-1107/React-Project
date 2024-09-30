@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import ico_close from "../../../images/ico_close.png";
@@ -12,8 +12,13 @@ const SignInModal = (props) => {
     userPw: "",
   });
 
-  const { isSignInModal, setIsSignInModal, openSignUpModal, setIsLoggedIn } =
-    props;
+  const {
+    isSignInModal,
+    setIsSignInModal,
+    openSignUpModal,
+    setIsLoggedIn,
+    setToken,
+  } = props;
   const navigate = useNavigate();
 
   const {
@@ -25,20 +30,19 @@ const SignInModal = (props) => {
     signInError,
   } = signInObject;
 
-  const onClickSignInButton = async (e, userData, setIsLoggedIn, navigate) => {
+  const onClickSignInButton = async (e) => {
     e.preventDefault();
     if (!userData.userId || !userData.userPw) {
       alert(notUserDataInput);
       return;
     }
-    //   console.log("로그인 요청 전:", userData);
     try {
       const res = await signInApi(userData);
-      // console.log("로그인 응답:", res);
+
       if (res) {
         if (res.code === 200) {
           alert(signInSuccess);
-          sessionStorage.setItem("userId", userData.userId);
+          setToken(res.data);
           setIsLoggedIn(true);
           navigate("/notice-board");
         } else if (res.code === 401) {
@@ -47,14 +51,13 @@ const SignInModal = (props) => {
           alert(signInCode500);
         }
       } else {
-        //   console.error("로그인에 실패했습니다. 서버 응답이 없습니다.");
         alert(signInError);
       }
     } catch (error) {
-      // console.error("에러가 발생했습니다:", error);
       alert(signInCatchError);
     }
   };
+
   return (
     <SignInModalWrap isSignInModal={isSignInModal}>
       <ModalCloseButton

@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { useRecoilValue } from "recoil";
+import { authTokenState } from "../../utills/state";
 import { useNavigate } from "react-router-dom";
+
 import styled from "styled-components";
 import { fetchBoardListApi } from "../../api/boardListApi";
 import {
@@ -14,6 +17,8 @@ import BoardListContainer from "./components/BoardListContainer";
 import CustomPagination from "./components/Pagination";
 
 const NoticeBoard = () => {
+  const authToken = useRecoilValue(authTokenState);
+
   const [isBoardDetailModal, setIsBoardDetailModal] = useState(false);
   const [selectedBoard, setSelectedBoard] = useState(null);
   const [boardList, setBoardList] = useState([]);
@@ -45,7 +50,7 @@ const NoticeBoard = () => {
     try {
       console.log("Current page", page);
       console.log("Offset", offset, "Limit", limit);
-      const response = await fetchBoardListApi(offset, limit);
+      const response = await fetchBoardListApi(offset, limit, authToken);
       if (response) {
         setBoardList(response.boardList);
         setTotalItemsCount(response.totalCount);
@@ -79,7 +84,7 @@ const NoticeBoard = () => {
 
   useEffect(() => {
     fetchAllBoardList();
-  }, [page]);
+  }, [page, authToken]);
 
   return (
     <>
@@ -99,6 +104,7 @@ const NoticeBoard = () => {
         <BoardDetailView
           isBoardDetailModal={isBoardDetailModal}
           selectedBoard={selectedBoard}
+          setIsBoardDetailModal={setIsBoardDetailModal}
           onClickCloseButton={closeBoardDetailModal}
         />
         <CreateButtonWrap>

@@ -6,54 +6,46 @@ import HeaderContents from "../../components/HeaderContents";
 import ChangePasswordModal from "./components/ChangePasswordModal";
 import MainContent from "./components/MainContent";
 
+import { useRecoilState } from "recoil";
+import { authTokenState } from "../../utills/state";
+
 const MainPage = () => {
+  const [token, setToken] = useRecoilState(authTokenState);
   const [isSignUpModal, setIsSignUpModal] = useState(false);
   const [isSignInModal, setIsSignInModal] = useState(false);
   const [isProfileUpdateModal, setIsProfileUpdateModal] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+
+  useEffect(() => {
+    const checkLogin = () => {
+      const storedToken = localStorage.getItem("token");
+      if (storedToken) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+    };
+
+    checkLogin();
+  }, []);
 
   const openSignUpModal = () => {
     setIsSignUpModal(true);
     setIsSignInModal(false);
   };
 
-  const signInAddToken = () => {
-    const token = sessionStorage.getItem("token");
-    if (token) {
-      setIsLoggedIn(true);
-    }
-  };
-  useEffect(() => {
-    signInAddToken();
-  }, []);
-
   const handleLogout = () => {
-    sessionStorage.removeItem("token");
+    localStorage.removeItem("token");
+    setToken(null);
     setIsLoggedIn(false);
   };
-
-  const handleUnload = (event) => {
-    // 새로고침과 탭 닫기를 구분하기 위해 event.returnValue를 사용
-    // 새로고침 시에는 sessionStorage에서 token을 삭제하지 않음
-    if (!event.returnValue) {
-      sessionStorage.removeItem("token");
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener("beforeunload", handleUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleUnload);
-    };
-  }, []);
 
   return (
     <>
       <HeaderContents />
       <MainWrap>
         <MainContent
-          isLoggedIn={isLoggedIn}
+          isLoggedIn={!!token}
           handleLogout={handleLogout}
           isProfileUpdateModal={isProfileUpdateModal}
           setIsProfileUpdateModal={setIsProfileUpdateModal}
@@ -76,6 +68,7 @@ const MainPage = () => {
           openSignUpModal={openSignUpModal}
           isLoggedIn={isLoggedIn}
           setIsLoggedIn={setIsLoggedIn}
+          setToken={setToken}
         />
       </MainWrap>
     </>
