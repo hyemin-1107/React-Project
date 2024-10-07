@@ -4,7 +4,6 @@ import styled from "styled-components";
 const CommentList = (props) => {
   const {
     comments,
-    token,
     editingCommentId,
     editingContent,
     handleEditComment,
@@ -13,6 +12,8 @@ const CommentList = (props) => {
     setEditingCommentId,
     setEditingContent,
   } = props;
+
+  const currentUserId = sessionStorage.getItem("userId");
 
   return (
     <CommentListContainer>
@@ -29,19 +30,18 @@ const CommentList = (props) => {
             </>
           ) : (
             <>
-              <p>{data.content}</p>
               <span>{data.comment}</span>
-              <span>{data.createAt}</span>
-              {data.userId === token && (
+              <span>{new Date(data.createAt).toLocaleString()}</span>
+              {data.boardId === currentUserId && (
                 <>
                   <button
                     onClick={() =>
-                      handleEditComment(data.commentId, data.content)
+                      handleEditComment(data.boardId, data.comment)
                     }
                   >
                     Edit
                   </button>
-                  <button onClick={() => handleDeleteComment(data.commentId)}>
+                  <button onClick={() => handleDeleteComment(data.boardId)}>
                     Delete
                   </button>
                 </>

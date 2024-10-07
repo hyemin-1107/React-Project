@@ -9,7 +9,9 @@ const CreateBoardForm = (props) => {
     handleCancelButton,
     onClickInputCompleteButton,
   } = props;
+
   const { boardTitle, boardDetail, previewURL } = userInput;
+  console.log("userInput", userInput);
 
   return (
     <CreateBoardContainer>

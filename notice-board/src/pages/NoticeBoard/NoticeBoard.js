@@ -50,13 +50,14 @@ const NoticeBoard = () => {
     try {
       console.log("Current page", page);
       console.log("Offset", offset, "Limit", limit);
-      const response = await fetchBoardListApi(offset, limit, authToken);
+      const response = await fetchBoardListApi(offset, limit);
       if (response) {
+        console.log("Board List Response", response.boardList);
         setBoardList(response.boardList);
         setTotalItemsCount(response.totalCount);
       }
     } catch (error) {
-      // console.error("게시판 리스트를 가져오는데 실패했습니다:", error.message);
+      console.error("게시판 리스트를 가져오는데 실패했습니다:", error.message);
       alert(fetchBoardError);
     }
   };
@@ -84,7 +85,7 @@ const NoticeBoard = () => {
 
   useEffect(() => {
     fetchAllBoardList();
-  }, [page, authToken]);
+  }, [page]);
 
   return (
     <>

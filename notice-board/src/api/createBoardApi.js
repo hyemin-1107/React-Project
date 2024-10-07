@@ -7,5 +7,6 @@ export const createNewBoardApi = async (formUserData) => {
     return response.data;
   } catch (error) {
     console.error("게시물 작성 실패", error);
+    return null;
   }
 };

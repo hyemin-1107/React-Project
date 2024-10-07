@@ -14,11 +14,13 @@ const MainPage = () => {
   const [isSignUpModal, setIsSignUpModal] = useState(false);
   const [isSignInModal, setIsSignInModal] = useState(false);
   const [isProfileUpdateModal, setIsProfileUpdateModal] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    !!sessionStorage.getItem("token"),
+  );
 
   useEffect(() => {
     const checkLogin = () => {
-      const storedToken = localStorage.getItem("token");
+      const storedToken = sessionStorage.getItem("token");
       if (storedToken) {
         setIsLoggedIn(true);
       } else {
@@ -35,7 +37,7 @@ const MainPage = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
     setToken(null);
     setIsLoggedIn(false);
   };

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import ico_close from "../../../images/ico_close.png";
@@ -19,6 +19,7 @@ const SignInModal = (props) => {
     setIsLoggedIn,
     setToken,
   } = props;
+
   const navigate = useNavigate();
 
   const {

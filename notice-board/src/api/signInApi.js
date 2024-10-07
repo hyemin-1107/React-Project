@@ -5,7 +5,8 @@ export const signInApi = async (userData) => {
     const res = await axiosInstance.post("/user/", userData);
     const token = res.data.data;
 
-    localStorage.setItem("token", token);
+    sessionStorage.setItem("token", token);
+    sessionStorage.setItem("userId", userData.userId);
 
     return res.data;
   } catch (error) {

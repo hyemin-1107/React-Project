@@ -4,5 +4,5 @@ import { persistAtom } from "./recoilPersist";
 export const authTokenState = atom({
   key: "authTokenState",
   default: null, // 기본값 (로그아웃 상태)
-  effects_UNSTABLE: [persistAtom], // persistAtom 적용하여 localStorage에 저장
+  effects_UNSTABLE: [persistAtom],
 });

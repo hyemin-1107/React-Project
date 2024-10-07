@@ -73,19 +73,21 @@ const CreateBoard = () => {
     }
   };
 
-  const token = sessionStorage.getItem("token");
-  const userId = sessionStorage.getItem("userId");
-
   //함수명변경
   const checkAuthentication = () => {
+    const token = sessionStorage.getItem("token");
+    const userId = sessionStorage.getItem("userId");
+
     if (!token) {
       navigate("/");
       alert("로그인 후 이용해주세요");
-    } else {
+    } else if (userId) {
       setUserInput((prevState) => ({
         ...prevState,
         userId: userId,
       }));
+    } else {
+      console.error();
     }
   };
 

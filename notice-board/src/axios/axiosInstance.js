@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const token = localStorage.getItem("token");
+const token = sessionStorage.getItem("token");
 const defaultOptions = {
   baseURL: process.env.REACT_APP_API_URL,
   headers: {
@@ -15,7 +15,7 @@ const axiosInstance = axios.create(defaultOptions);
 // 인터셉터를 추가하여 요청마다 최신 토큰을 헤더에 포함
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

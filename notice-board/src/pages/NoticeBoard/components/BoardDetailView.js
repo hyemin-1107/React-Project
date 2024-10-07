@@ -18,7 +18,7 @@ const BoardDetailView = (props) => {
   const [editingContent, setEditingContent] = useState("");
 
   const { isBoardDetailModal, onClickCloseButton, selectedBoard } = props;
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   const updateCommentCallBackFunction = () => {
     if (isBoardDetailModal && selectedBoard) {
@@ -50,14 +50,15 @@ const BoardDetailView = (props) => {
   };
 
   const handleUpdateComment = async () => {
-    try {
-      await updateCommentApi(editingCommentId, editingContent);
-      await updateCommentsList(selectedBoard.boardId);
-      setEditingCommentId(null);
-      setEditingContent("");
-    } catch (error) {
-      // console.error("댓글 수정에 실패했습니다.", error);
-      alert(editingCommentError);
+    if (editingCommentId) {
+      try {
+        await updateCommentApi(editingCommentId, editingContent);
+        await updateCommentsList(selectedBoard.boardId); // 댓글 목록을 다시 불러오기
+        setEditingCommentId(null); // 수정 모드 종료
+        setEditingContent("");
+      } catch (error) {
+        alert(editingCommentError); // 에러 처리
+      }
     }
   };
 
