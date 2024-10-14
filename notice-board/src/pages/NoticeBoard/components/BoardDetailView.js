@@ -42,7 +42,7 @@ const BoardDetailView = (props) => {
     try {
       const updatedComments = await fetchCommentsApi(boardId);
       setComments(updatedComments);
-      // console.log("Updated Comments:", updatedComments);
+      console.log("Updated Comments", updatedComments);
     } catch (error) {
       // console.error("댓글 목록 갱신에 실패했습니다.", error);
       alert(updatedCommentsError);
@@ -57,7 +57,7 @@ const BoardDetailView = (props) => {
         setEditingCommentId(null); // 수정 모드 종료
         setEditingContent("");
       } catch (error) {
-        alert(editingCommentError); // 에러 처리
+        alert(editingCommentError);
       }
     }
   };
@@ -79,11 +79,8 @@ const BoardDetailView = (props) => {
 
   const handlePostComment = async () => {
     try {
-      const newComment = await postCommentApi(
-        selectedBoard.boardId,
-        inputComment,
-      );
-      setComments([...comments, newComment]);
+      await postCommentApi(selectedBoard.boardId, inputComment);
+      await updateCommentsList(selectedBoard.boardId);
       setInputComment("");
     } catch (error) {
       // console.error("댓글 작성에 실패했습니다.", error);
@@ -112,7 +109,7 @@ const BoardDetailView = (props) => {
             <div>{selectedBoard.userId}</div>
             <div>{new Date(selectedBoard.createAt).toLocaleDateString()}</div>
           </BoardDetailViewUserDate>
-          <BoardImg src={selectedBoard.src} alt="noticeBoardImg" />
+          <BoardImg src={selectedBoard.src} alt="게시글 이미지" />
           <p>{selectedBoard.boardDetail}</p>
           <CommentContainer>
             <input

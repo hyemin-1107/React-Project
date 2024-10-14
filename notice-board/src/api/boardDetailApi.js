@@ -4,7 +4,7 @@ import axiosInstance from "../axios/axiosInstance";
 export const fetchBoardDetailApi = async (boardId) => {
   try {
     const response = await axiosInstance.get(`/board/${boardId}`);
-    console.log("API Response:", response.data.data);
+    console.log("게시물 상세 정보", response.data);
     if (response.data.code === 200) {
       return response.data.data;
     } else {
@@ -21,6 +21,7 @@ export const fetchCommentsApi = async (boardId) => {
     const response = await axiosInstance.get(`/comment/${boardId}`);
     console.log("API Response Comment", response.data);
     if (response.data.code === 200) {
+      console.log("댓글", response.data);
       return response.data.data;
     } else {
       console.error("댓글 목록을 가져오는데 실패했습니다");
@@ -52,10 +53,10 @@ export const postCommentApi = async (boardId, comment) => {
 };
 
 // 댓글 수정하기
-export const updateCommentApi = async (commentId, content) => {
+export const updateCommentApi = async (commentId, comment) => {
   try {
     const response = await axiosInstance.put(`/comment/${commentId}`, {
-      content,
+      comment,
     });
     if (response.data.code === 200) {
       return response.data.data;

@@ -32,16 +32,16 @@ const CommentList = (props) => {
             <>
               <span>{data.comment}</span>
               <span>{new Date(data.createAt).toLocaleString()}</span>
-              {data.boardId === currentUserId && (
+              {data.userId === currentUserId && (
                 <>
                   <button
                     onClick={() =>
-                      handleEditComment(data.boardId, data.comment)
+                      handleEditComment(data.commentId, data.comment)
                     }
                   >
                     Edit
                   </button>
-                  <button onClick={() => handleDeleteComment(data.boardId)}>
+                  <button onClick={() => handleDeleteComment(data.commentId)}>
                     Delete
                   </button>
                 </>

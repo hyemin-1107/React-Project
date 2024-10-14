@@ -22,8 +22,16 @@ const ChangePasswordModal = (props) => {
   };
 
   const { pwChangeSuccess, pwChangeError, pwChangeCatchError } = pwChangeObject;
+
   const onClickPasswordChange = async () => {
-    const { userId, userPw, newUserPw, confirmUserPw } = passwordData;
+    const userId = sessionStorage.getItem("userId");
+    const { userPw, newUserPw, confirmUserPw } = passwordData;
+
+    if (newUserPw !== confirmUserPw) {
+      alert("새 비밀번호가 일치하지 않습니다.");
+      return;
+    }
+
     try {
       const res = await pwChangeUpdateApi({
         userId,
