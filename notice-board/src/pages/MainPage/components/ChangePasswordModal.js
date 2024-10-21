@@ -3,15 +3,17 @@ import styled from "styled-components";
 import { pwChangeUpdateApi } from "../../../api/passwordChangeApi";
 import { pwChangeObject } from "../../../utills/message";
 import ico_close from "../../../images/ico_close.png";
+import { useRecoilValue } from "recoil";
+import { userIdState } from "../../../utills/state";
 
 const ChangePasswordModal = (props) => {
   const [passwordData, setPasswordData] = useState({
-    userId: "",
     userPw: "",
     newUserPw: "",
     confirmUserPw: "",
   });
   const { isProfileUpdateModal, setIsProfileUpdateModal } = props;
+  const userId = useRecoilValue(userIdState);
 
   const onChangePasswordInput = (e) => {
     const { name, value } = e.target;
@@ -24,7 +26,6 @@ const ChangePasswordModal = (props) => {
   const { pwChangeSuccess, pwChangeError, pwChangeCatchError } = pwChangeObject;
 
   const onClickPasswordChange = async () => {
-    const userId = sessionStorage.getItem("userId");
     const { userPw, newUserPw, confirmUserPw } = passwordData;
 
     if (newUserPw !== confirmUserPw) {
@@ -37,8 +38,8 @@ const ChangePasswordModal = (props) => {
         userId,
         userPw,
         newUserPw,
-        confirmUserPw,
       });
+      console.log("PwChange Response", res);
       if (res.code === 200) {
         alert(pwChangeSuccess);
         setIsProfileUpdateModal(false);

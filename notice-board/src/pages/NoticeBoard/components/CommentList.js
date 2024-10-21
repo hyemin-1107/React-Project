@@ -1,5 +1,7 @@
 import React from "react";
 import styled from "styled-components";
+import { useSetRecoilState } from "recoil";
+import { userIdState } from "../../../utills/state";
 
 const CommentList = (props) => {
   const {
@@ -13,7 +15,7 @@ const CommentList = (props) => {
     setEditingContent,
   } = props;
 
-  const currentUserId = sessionStorage.getItem("userId");
+  const setUserId = useSetRecoilState(userIdState);
 
   return (
     <CommentListContainer>
@@ -25,14 +27,18 @@ const CommentList = (props) => {
                 value={editingContent}
                 onChange={(e) => setEditingContent(e.target.value)}
               />
-              <button onClick={handleUpdateComment}>Update</button>
-              <button onClick={() => setEditingCommentId(null)}>Cancel</button>
+              {/* <button onClick={handleUpdateComment}>Update</button>
+              <button onClick={() => setEditingCommentId(null)}>Cancel</button> */}
             </>
           ) : (
             <>
-              <span>{data.comment}</span>
-              <span>{new Date(data.createAt).toLocaleString()}</span>
-              {data.userId === currentUserId && (
+              <CommentUserId>{data.userId}</CommentUserId>
+              <CommentDate>
+                {new Date(data.createAt).toLocaleString()}
+              </CommentDate>
+              <Comment>{data.comment}</Comment>
+
+              {data.userId === setUserId && (
                 <>
                   <button
                     onClick={() =>
@@ -63,16 +69,25 @@ const CommentListContainer = styled.div`
 const CommentItem = styled.div`
   border-bottom: 1px solid #eee;
   padding: 10px 0;
-  p {
-    margin: 0;
-  }
-  small {
-    display: block;
-    margin-top: 5px;
-    color: #999;
-  }
+
   button {
     margin-top: 10px;
     margin-right: 10px;
   }
+`;
+
+const CommentUserId = styled.span`
+  margin: 0 10px;
+
+  font-weight: 500;
+  font-size: 14px;
+`;
+const CommentDate = styled.span`
+  font-weight: 500;
+  font-size: 14px;
+`;
+
+const Comment = styled.div`
+  margin: 0 10px;
+  padding-top: 2px;
 `;

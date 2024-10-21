@@ -7,9 +7,12 @@ import {
   updateCommentApi,
   deleteCommentApi,
 } from "../../../api/boardDetailApi";
+import { deleteBoardApi } from "../../../api/boardListApi";
 import ico_close from "../../../images/ico_close.png";
 import CommentList from "./CommentList";
 import { commentObject } from "../../../utills/message";
+import { useRecoilValue } from "recoil";
+import { authTokenState, userIdState } from "../../../utills/state";
 
 const BoardDetailView = (props) => {
   const [comments, setComments] = useState([]);
@@ -17,8 +20,15 @@ const BoardDetailView = (props) => {
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editingContent, setEditingContent] = useState("");
 
-  const { isBoardDetailModal, onClickCloseButton, selectedBoard } = props;
-  const token = sessionStorage.getItem("token");
+  const {
+    isBoardDetailModal,
+    onClickCloseButton,
+    selectedBoard,
+    fetchAllBoardList,
+  } = props;
+
+  const authToken = useRecoilValue(authTokenState);
+  const userId = useRecoilValue(userIdState);
 
   const updateCommentCallBackFunction = () => {
     if (isBoardDetailModal && selectedBoard) {
@@ -38,9 +48,9 @@ const BoardDetailView = (props) => {
     postCommentError,
   } = commentObject;
 
-  const updateCommentsList = async (boardId) => {
+  const updateCommentsList = async (boardId, authToken) => {
     try {
-      const updatedComments = await fetchCommentsApi(boardId);
+      const updatedComments = await fetchCommentsApi(boardId, authToken);
       setComments(updatedComments);
       console.log("Updated Comments", updatedComments);
     } catch (error) {
@@ -79,12 +89,35 @@ const BoardDetailView = (props) => {
 
   const handlePostComment = async () => {
     try {
-      await postCommentApi(selectedBoard.boardId, inputComment);
-      await updateCommentsList(selectedBoard.boardId);
-      setInputComment("");
+      const response = await postCommentApi(
+        selectedBoard.boardId,
+        inputComment,
+        authToken,
+      );
+      if (response) {
+        await updateCommentsList(selectedBoard.boardId); // 댓글 목록 갱신
+        setInputComment("");
+      } else {
+        console.error("댓글 작성에 실패했습니다.");
+        alert("댓글 작성에 실패했습니다.");
+      }
     } catch (error) {
-      // console.error("댓글 작성에 실패했습니다.", error);
-      alert(postCommentError);
+      console.error("댓글 작성에 실패했습니다 error", error);
+      alert("댓글 작성 중 오류가 발생했습니다.");
+    }
+  };
+
+  const handleDeleteBoard = async (fetchAllBoardList) => {
+    if (window.confirm("게시글을 삭제하시겠습니까?")) {
+      try {
+        await deleteBoardApi(selectedBoard.boardId, authToken);
+        alert("게시글이 삭제되었습니다.");
+        onClickCloseButton();
+        fetchAllBoardList();
+      } catch (error) {
+        console.log("게시글 삭제에 실패했습니다.", error);
+        alert("게시글 삭제에 실패했습니다.");
+      }
     }
   };
 
@@ -95,7 +128,6 @@ const BoardDetailView = (props) => {
   if (!selectedBoard) {
     return null; // selectedBoard가 없으면 아무것도 렌더링하지 않음
   }
-  console.log("Image Source:", selectedBoard.imagePath);
 
   return (
     <Wrap isBoardDetailModal={isBoardDetailModal}>
@@ -107,10 +139,18 @@ const BoardDetailView = (props) => {
           <CloseButton src={ico_close} alt="" onClick={onClickCloseButton} />
           <BoardDetailViewUserDate>
             <div>{selectedBoard.userId}</div>
+            {selectedBoard.userId === userId && (
+              <DeleteButton
+                onClick={() => handleDeleteBoard(fetchAllBoardList)}
+              >
+                게시글 삭제
+              </DeleteButton>
+            )}
             <div>{new Date(selectedBoard.createAt).toLocaleDateString()}</div>
           </BoardDetailViewUserDate>
           <BoardImg src={selectedBoard.src} alt="게시글 이미지" />
           <p>{selectedBoard.boardDetail}</p>
+
           <CommentContainer>
             <input
               onChange={InputComment}
@@ -121,7 +161,7 @@ const BoardDetailView = (props) => {
           </CommentContainer>
           <CommentList
             comments={comments}
-            token={token}
+            authToken={authToken}
             editingCommentId={editingCommentId}
             editingContent={editingContent}
             handleEditComment={handleEditComment}
@@ -153,6 +193,7 @@ const Wrap = styled.div`
 const BoardDetailViewHeader = styled.header`
   position: fixed;
 
+  top: 28px;
   padding-bottom: 5px;
 
   height: 50px;
@@ -163,6 +204,21 @@ const BoardDetailViewHeader = styled.header`
     margin-left: 16px;
     padding-bottom: 10px;
     border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  }
+`;
+
+const DeleteButton = styled.button`
+  margin-left: 500px;
+  padding: 6px;
+
+  color: white;
+  border: 1px solid #666;
+  background-color: #66bacf;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #3a809b;
   }
 `;
 
@@ -241,6 +297,7 @@ const CloseButton = styled.img`
 const BoardDetailViewUserDate = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
 
   margin: 62px 30px 0px 16px;
 `;
@@ -251,10 +308,10 @@ const CommentContainer = styled.div`
 
   border-top: 2px solid rgba(0, 0, 0, 0.1);
   input {
-    margin: 26px 0;
+    margin: 20px;
     padding: 6px;
 
-    width: 83%;
+    width: 80%;
 
     box-sizing: border-box;
     border-bottom: 1px solid #bed9e3;
@@ -264,7 +321,7 @@ const CommentContainer = styled.div`
     }
   }
   button {
-    margin-left: 22px;
+    /* margin-left: 22px; */
     padding: 6px 20px;
 
     font-weight: bold;

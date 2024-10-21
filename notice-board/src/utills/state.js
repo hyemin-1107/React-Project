@@ -3,6 +3,12 @@ import { persistAtom } from "./recoilPersist";
 
 export const authTokenState = atom({
   key: "authTokenState",
-  default: null, // 기본값 (로그아웃 상태)
+  default: null,
+  effects_UNSTABLE: [persistAtom],
+});
+
+export const userIdState = atom({
+  key: "userIdState",
+  default: null,
   effects_UNSTABLE: [persistAtom],
 });

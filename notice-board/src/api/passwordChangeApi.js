@@ -5,10 +5,11 @@ export const pwChangeUpdateApi = async (passwordData) => {
   try {
     console.log("Request Data", { userId, userPw, newUserPw });
     const response = await axiosInstance.put("/user/", {
-      userId: userId,
-      userPw: userPw,
-      newUserPw: newUserPw,
+      userId,
+      userPw,
+      newUserPw,
     });
+    console.log("비밀번호 Response", response);
     console.log("비밀번호 변경", response.data);
     return response.data;
   } catch (error) {

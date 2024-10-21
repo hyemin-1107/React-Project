@@ -5,6 +5,8 @@ import ico_close from "../../../images/ico_close.png";
 import { signInApi } from "../../../api/signInApi";
 import { signInObject } from "../../../utills/message";
 import { onChangeUserDataHandler } from "../../../utills/onChangeUserData";
+import { useSetRecoilState } from "recoil";
+import { authTokenState, userIdState } from "../../../utills/state";
 
 const SignInModal = (props) => {
   const [userData, setUserData] = useState({
@@ -12,13 +14,11 @@ const SignInModal = (props) => {
     userPw: "",
   });
 
-  const {
-    isSignInModal,
-    setIsSignInModal,
-    openSignUpModal,
-    setIsLoggedIn,
-    setToken,
-  } = props;
+  const setAuthToken = useSetRecoilState(authTokenState);
+  const setUserId = useSetRecoilState(userIdState);
+
+  const { isSignInModal, setIsSignInModal, openSignUpModal, setIsLoggedIn } =
+    props;
 
   const navigate = useNavigate();
 
@@ -33,6 +33,7 @@ const SignInModal = (props) => {
 
   const onClickSignInButton = async (e) => {
     e.preventDefault();
+
     if (!userData.userId || !userData.userPw) {
       alert(notUserDataInput);
       return;
@@ -42,8 +43,14 @@ const SignInModal = (props) => {
 
       if (res) {
         if (res.code === 200) {
+          console.log("로그인정보", res);
           alert(signInSuccess);
-          setToken(res.data);
+
+          const token = res.data;
+          setAuthToken(token); // API에서 받은 토큰을 설정
+
+          setUserId(userData.userId); // 사용자의 ID를 설정
+
           setIsLoggedIn(true);
           navigate("/notice-board");
         } else if (res.code === 401) {
@@ -68,11 +75,7 @@ const SignInModal = (props) => {
       />
       <SignInContainer>
         <SignInTitle>Sign In</SignInTitle>
-        <form
-          onSubmit={(e) =>
-            onClickSignInButton(e, userData, setIsLoggedIn, navigate)
-          }
-        >
+        <form onSubmit={onClickSignInButton}>
           <SignInInputWrap>
             {SIGN_IN_INPUT.map((input) => (
               <LoginInput
@@ -85,7 +88,12 @@ const SignInModal = (props) => {
               />
             ))}
           </SignInInputWrap>
-          <SignInButton type="submit">Sign In</SignInButton>
+          <SignInButton
+            type="submit"
+            disabled={!userData.userId || !userData.userPw}
+          >
+            Sign In
+          </SignInButton>
         </form>
         <NoUserContents>
           <NoUserSignUpText>회원이 아니신가요?</NoUserSignUpText>

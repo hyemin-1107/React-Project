@@ -16,9 +16,13 @@ export const fetchBoardDetailApi = async (boardId) => {
 };
 
 // 댓글 목록 가져오기
-export const fetchCommentsApi = async (boardId) => {
+export const fetchCommentsApi = async (boardId, token) => {
   try {
-    const response = await axiosInstance.get(`/comment/${boardId}`);
+    const response = await axiosInstance.get(`/comment/${boardId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     console.log("API Response Comment", response.data);
     if (response.data.code === 200) {
       console.log("댓글", response.data);
@@ -42,13 +46,17 @@ export const postCommentApi = async (boardId, comment) => {
       boardId,
       comment,
     });
-    if (response.data.code === 200) {
-      return response.data.data;
+
+    console.log("Response data", response.data);
+    console.log("boardId", boardId, "comment", comment);
+
+    if (response.data.result === "success") {
+      return response;
     } else {
       console.error("댓글을 추가하는데 실패했습니다");
     }
   } catch (error) {
-    console.error("댓글을 추가하는데 실패했습니다", error);
+    console.error("댓글을 추가하는데 실패했습니다 error", error);
   }
 };
 
@@ -58,7 +66,7 @@ export const updateCommentApi = async (commentId, comment) => {
     const response = await axiosInstance.put(`/comment/${commentId}`, {
       comment,
     });
-    if (response.data.code === 200) {
+    if (response.status === 200) {
       return response.data.data;
     } else {
       console.error("댓글을 수정하는데 실패했습니다");
@@ -72,7 +80,7 @@ export const updateCommentApi = async (commentId, comment) => {
 export const deleteCommentApi = async (commentId) => {
   try {
     const response = await axiosInstance.delete(`/comment/${commentId}`);
-    if (response.data.code === 200) {
+    if (response.status === 200) {
       return true;
     } else {
       console.error("댓글을 삭제하는데 실패했습니다");

@@ -17,7 +17,7 @@ import BoardListContainer from "./components/BoardListContainer";
 import CustomPagination from "./components/Pagination";
 
 const NoticeBoard = () => {
-  const authToken = useRecoilValue(authTokenState);
+  // const authToken = useRecoilValue(authTokenState);
 
   const [isBoardDetailModal, setIsBoardDetailModal] = useState(false);
   const [selectedBoard, setSelectedBoard] = useState(null);
@@ -46,6 +46,7 @@ const NoticeBoard = () => {
   };
 
   const { fetchBoardError, boardDetailError } = noticeBoardObject;
+
   const fetchAllBoardList = async () => {
     try {
       console.log("Current page", page);
@@ -80,7 +81,6 @@ const NoticeBoard = () => {
 
   const handlePageChange = (pageNumber) => {
     setPage(pageNumber);
-    fetchAllBoardList();
   };
 
   useEffect(() => {
@@ -101,6 +101,7 @@ const NoticeBoard = () => {
           boardList={boardList}
           openBoardDetailModal={openBoardDetailModal}
           formattedDate={formattedDate}
+          fetchAllBoardList={fetchAllBoardList}
         />
         <BoardDetailView
           isBoardDetailModal={isBoardDetailModal}

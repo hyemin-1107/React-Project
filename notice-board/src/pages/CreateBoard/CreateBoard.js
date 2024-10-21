@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useRecoilValue } from "recoil";
+import { authTokenState, userIdState } from "../../utills/state";
 import { createNewBoardApi } from "../../api/createBoardApi";
 import { createBoardObject } from "../../utills/message";
 import HeaderContents from "../../components/HeaderContents";
 import CreateBoardForm from "./components/CreateBoardForm";
 
 const CreateBoard = () => {
+  const authToken = useRecoilValue(authTokenState);
+  const userId = useRecoilValue(userIdState);
+
   const [userInput, setUserInput] = useState({
     userId: "",
     boardTitle: "",
@@ -54,6 +59,7 @@ const CreateBoard = () => {
     createBoardFillInValues,
     createBoardCatchError,
   } = createBoardObject;
+
   const onClickInputCompleteButton = async () => {
     try {
       const { boardTitle, boardDetail, imageSrc } = userInput;
@@ -73,27 +79,21 @@ const CreateBoard = () => {
     }
   };
 
-  //함수명변경
   const checkAuthentication = () => {
-    const token = sessionStorage.getItem("token");
-    const userId = sessionStorage.getItem("userId");
-
-    if (!token) {
+    if (!authToken) {
       navigate("/");
       alert("로그인 후 이용해주세요");
-    } else if (userId) {
+    } else {
       setUserInput((prevState) => ({
         ...prevState,
-        userId: userId,
+        userId: userId, // Recoil에서 가져온 userId 설정
       }));
-    } else {
-      console.error();
     }
   };
 
   useEffect(() => {
     checkAuthentication();
-  }, [navigate]);
+  }, [authToken, navigate, userId]);
 
   return (
     <>
