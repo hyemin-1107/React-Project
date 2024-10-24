@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { useSetRecoilState } from "recoil";
-import { userIdState } from "../../../utills/state";
+import { userId } from "../../../utills/state";
 
 const CommentList = (props) => {
   const {
@@ -15,7 +15,7 @@ const CommentList = (props) => {
     setEditingContent,
   } = props;
 
-  const setUserId = useSetRecoilState(userIdState);
+  const dischargeUserId = useSetRecoilState(userId);
 
   return (
     <CommentListContainer>
@@ -38,7 +38,7 @@ const CommentList = (props) => {
               </CommentDate>
               <Comment>{data.comment}</Comment>
 
-              {data.userId === setUserId && (
+              {data.userId === dischargeUserId && (
                 <>
                   <button
                     onClick={() =>

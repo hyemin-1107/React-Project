@@ -21,7 +21,7 @@ const SignUpModal = (props) => {
     signUpCatchError,
   } = signUpObject;
 
-  const onClickSignUpButton = async (userData, setIsSignUpModal) => {
+  const onSubmitSignUpButton = async (userData, setIsSignUpModal) => {
     const { userId, birth, userPw, confirmPassword } = userData;
     const passwordCheck = userPw === confirmPassword;
     if (userId === "" || birth === "" || userPw === "") {
@@ -103,7 +103,7 @@ const SignUpModal = (props) => {
       <SignUpButtonContents>
         <button
           type="submit"
-          onClick={() => onClickSignUpButton(userData, setIsSignUpModal)}
+          onClick={() => onSubmitSignUpButton(userData, setIsSignUpModal)}
         >
           가입 완료
         </button>

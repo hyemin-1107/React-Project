@@ -12,7 +12,7 @@ import ico_close from "../../../images/ico_close.png";
 import CommentList from "./CommentList";
 import { commentObject } from "../../../utills/message";
 import { useRecoilValue } from "recoil";
-import { authTokenState, userIdState } from "../../../utills/state";
+import { authToken, userId } from "../../../utills/state";
 
 const BoardDetailView = (props) => {
   const [comments, setComments] = useState([]);
@@ -27,8 +27,8 @@ const BoardDetailView = (props) => {
     fetchAllBoardList,
   } = props;
 
-  const authToken = useRecoilValue(authTokenState);
-  const userId = useRecoilValue(userIdState);
+  const dischargeAuthToken = useRecoilValue(authToken);
+  const dischargeUserId = useRecoilValue(userId);
 
   const updateCommentCallBackFunction = () => {
     if (isBoardDetailModal && selectedBoard) {
@@ -50,7 +50,10 @@ const BoardDetailView = (props) => {
 
   const updateCommentsList = async (boardId, authToken) => {
     try {
-      const updatedComments = await fetchCommentsApi(boardId, authToken);
+      const updatedComments = await fetchCommentsApi(
+        boardId,
+        dischargeAuthToken,
+      );
       setComments(updatedComments);
       console.log("Updated Comments", updatedComments);
     } catch (error) {
@@ -92,7 +95,7 @@ const BoardDetailView = (props) => {
       const response = await postCommentApi(
         selectedBoard.boardId,
         inputComment,
-        authToken,
+        dischargeAuthToken,
       );
       if (response) {
         await updateCommentsList(selectedBoard.boardId); // 댓글 목록 갱신
@@ -107,10 +110,10 @@ const BoardDetailView = (props) => {
     }
   };
 
-  const handleDeleteBoard = async (fetchAllBoardList) => {
+  const handleDeleteBoard = async () => {
     if (window.confirm("게시글을 삭제하시겠습니까?")) {
       try {
-        await deleteBoardApi(selectedBoard.boardId, authToken);
+        await deleteBoardApi(selectedBoard.boardId, dischargeAuthToken);
         alert("게시글이 삭제되었습니다.");
         onClickCloseButton();
         fetchAllBoardList();
@@ -139,7 +142,7 @@ const BoardDetailView = (props) => {
           <CloseButton src={ico_close} alt="" onClick={onClickCloseButton} />
           <BoardDetailViewUserDate>
             <div>{selectedBoard.userId}</div>
-            {selectedBoard.userId === userId && (
+            {selectedBoard.userId === dischargeUserId && (
               <DeleteButton
                 onClick={() => handleDeleteBoard(fetchAllBoardList)}
               >

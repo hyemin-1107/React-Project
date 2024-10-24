@@ -66,7 +66,7 @@ export const updateCommentApi = async (commentId, comment) => {
     const response = await axiosInstance.put(`/comment/${commentId}`, {
       comment,
     });
-    if (response.status === 200) {
+    if (response.data.code === 200) {
       return response.data.data;
     } else {
       console.error("댓글을 수정하는데 실패했습니다");
@@ -80,7 +80,7 @@ export const updateCommentApi = async (commentId, comment) => {
 export const deleteCommentApi = async (commentId) => {
   try {
     const response = await axiosInstance.delete(`/comment/${commentId}`);
-    if (response.status === 200) {
+    if (response.data.code === 200) {
       return true;
     } else {
       console.error("댓글을 삭제하는데 실패했습니다");

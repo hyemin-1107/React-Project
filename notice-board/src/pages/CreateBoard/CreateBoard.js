@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
-import { authTokenState, userIdState } from "../../utills/state";
+import { authToken, userId } from "../../utills/state";
 import { createNewBoardApi } from "../../api/createBoardApi";
 import { createBoardObject } from "../../utills/message";
 import HeaderContents from "../../components/HeaderContents";
 import CreateBoardForm from "./components/CreateBoardForm";
 
 const CreateBoard = () => {
-  const authToken = useRecoilValue(authTokenState);
-  const userId = useRecoilValue(userIdState);
+  const dischargeAuthToken = useRecoilValue(authToken);
+  const dischargeUserId = useRecoilValue(userId);
 
   const [userInput, setUserInput] = useState({
     userId: "",
@@ -80,20 +80,20 @@ const CreateBoard = () => {
   };
 
   const checkAuthentication = () => {
-    if (!authToken) {
+    if (!dischargeAuthToken) {
       navigate("/");
       alert("로그인 후 이용해주세요");
     } else {
       setUserInput((prevState) => ({
         ...prevState,
-        userId: userId, // Recoil에서 가져온 userId 설정
+        userId: dischargeUserId, // Recoil에서 가져온 userId 설정
       }));
     }
   };
 
   useEffect(() => {
     checkAuthentication();
-  }, [authToken, navigate, userId]);
+  }, [dischargeAuthToken, navigate, userId]);
 
   return (
     <>

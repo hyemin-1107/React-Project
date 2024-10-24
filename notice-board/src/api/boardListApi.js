@@ -12,7 +12,7 @@ export const fetchBoardListApi = async (offset, limit, authToken) => {
       },
     });
 
-    if (response.status === 200) {
+    if (response.data.code === 200) {
       console.log("API", response.data);
 
       return {
@@ -34,7 +34,7 @@ export const deleteBoardApi = async (boardId, authToken) => {
         Authorization: `Bearer ${authToken}`,
       },
     });
-    if (response.status === 200) {
+    if (response.data.code === 200) {
       console.log("게시글 삭제 성공", response);
     } else {
       console.error(response.status);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useRecoilValue } from "recoil";
-import { authTokenState } from "../../utills/state";
 import { useNavigate } from "react-router-dom";
+import { useRecoilValue } from "recoil";
+import { authToken } from "../../utills/state";
 
 import styled from "styled-components";
 import { fetchBoardListApi } from "../../api/boardListApi";
@@ -17,8 +17,6 @@ import BoardListContainer from "./components/BoardListContainer";
 import CustomPagination from "./components/Pagination";
 
 const NoticeBoard = () => {
-  // const authToken = useRecoilValue(authTokenState);
-
   const [isBoardDetailModal, setIsBoardDetailModal] = useState(false);
   const [selectedBoard, setSelectedBoard] = useState(null);
   const [boardList, setBoardList] = useState([]);
@@ -85,7 +83,7 @@ const NoticeBoard = () => {
 
   useEffect(() => {
     fetchAllBoardList();
-  }, [page]);
+  }, [page, isBoardDetailModal]);
 
   return (
     <>
@@ -101,13 +99,13 @@ const NoticeBoard = () => {
           boardList={boardList}
           openBoardDetailModal={openBoardDetailModal}
           formattedDate={formattedDate}
-          fetchAllBoardList={fetchAllBoardList}
         />
         <BoardDetailView
           isBoardDetailModal={isBoardDetailModal}
           selectedBoard={selectedBoard}
           setIsBoardDetailModal={setIsBoardDetailModal}
           onClickCloseButton={closeBoardDetailModal}
+          fetchAllBoardList={fetchAllBoardList}
         />
         <CreateButtonWrap>
           <CustomPagination

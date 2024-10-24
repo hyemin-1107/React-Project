@@ -6,7 +6,7 @@ import { signInApi } from "../../../api/signInApi";
 import { signInObject } from "../../../utills/message";
 import { onChangeUserDataHandler } from "../../../utills/onChangeUserData";
 import { useSetRecoilState } from "recoil";
-import { authTokenState, userIdState } from "../../../utills/state";
+import { authToken, userId } from "../../../utills/state";
 
 const SignInModal = (props) => {
   const [userData, setUserData] = useState({
@@ -14,8 +14,8 @@ const SignInModal = (props) => {
     userPw: "",
   });
 
-  const setAuthToken = useSetRecoilState(authTokenState);
-  const setUserId = useSetRecoilState(userIdState);
+  const dischargeAuthToken = useSetRecoilState(authToken);
+  const dischargeUserId = useSetRecoilState(userId);
 
   const { isSignInModal, setIsSignInModal, openSignUpModal, setIsLoggedIn } =
     props;
@@ -31,7 +31,7 @@ const SignInModal = (props) => {
     signInError,
   } = signInObject;
 
-  const onClickSignInButton = async (e) => {
+  const onSubmitSignInButton = async (e) => {
     e.preventDefault();
 
     if (!userData.userId || !userData.userPw) {
@@ -47,9 +47,9 @@ const SignInModal = (props) => {
           alert(signInSuccess);
 
           const token = res.data;
-          setAuthToken(token); // API에서 받은 토큰을 설정
+          dischargeAuthToken(token); // API에서 받은 토큰을 설정
 
-          setUserId(userData.userId); // 사용자의 ID를 설정
+          dischargeUserId(userData.userId); // 사용자의 ID를 설정
 
           setIsLoggedIn(true);
           navigate("/notice-board");
@@ -75,7 +75,7 @@ const SignInModal = (props) => {
       />
       <SignInContainer>
         <SignInTitle>Sign In</SignInTitle>
-        <form onSubmit={onClickSignInButton}>
+        <form onSubmit={onSubmitSignInButton}>
           <SignInInputWrap>
             {SIGN_IN_INPUT.map((input) => (
               <LoginInput

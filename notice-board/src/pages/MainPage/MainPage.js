@@ -7,29 +7,25 @@ import ChangePasswordModal from "./components/ChangePasswordModal";
 import MainContent from "./components/MainContent";
 
 import { useRecoilState } from "recoil";
-import { authTokenState } from "../../utills/state";
+import { authToken } from "../../utills/state";
 
 const MainPage = () => {
-  const [token, setToken] = useRecoilState(authTokenState);
+  const [token, setToken] = useRecoilState(authToken);
   const [isSignUpModal, setIsSignUpModal] = useState(false);
   const [isSignInModal, setIsSignInModal] = useState(false);
   const [isProfileUpdateModal, setIsProfileUpdateModal] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    !!sessionStorage.getItem("token"),
-  );
+  const [isLoggedIn, setIsLoggedIn] = useState(!!token);
 
   useEffect(() => {
     const checkLogin = () => {
-      const storedToken = sessionStorage.getItem("token");
-      if (storedToken) {
+      if (token) {
         setIsLoggedIn(true);
       } else {
         setIsLoggedIn(false);
       }
     };
-
     checkLogin();
-  }, []);
+  }, [token]);
 
   const openSignUpModal = () => {
     setIsSignUpModal(true);
@@ -37,7 +33,6 @@ const MainPage = () => {
   };
 
   const handleLogout = () => {
-    sessionStorage.removeItem("token");
     setToken(null);
     setIsLoggedIn(false);
   };

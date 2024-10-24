@@ -4,7 +4,7 @@ import { pwChangeUpdateApi } from "../../../api/passwordChangeApi";
 import { pwChangeObject } from "../../../utills/message";
 import ico_close from "../../../images/ico_close.png";
 import { useRecoilValue } from "recoil";
-import { userIdState } from "../../../utills/state";
+import { userId } from "../../../utills/state";
 
 const ChangePasswordModal = (props) => {
   const [passwordData, setPasswordData] = useState({
@@ -13,7 +13,7 @@ const ChangePasswordModal = (props) => {
     confirmUserPw: "",
   });
   const { isProfileUpdateModal, setIsProfileUpdateModal } = props;
-  const userId = useRecoilValue(userIdState);
+  const dischargeUserId = useRecoilValue(userId);
 
   const onChangePasswordInput = (e) => {
     const { name, value } = e.target;
@@ -35,7 +35,7 @@ const ChangePasswordModal = (props) => {
 
     try {
       const res = await pwChangeUpdateApi({
-        userId,
+        dischargeUserId,
         userPw,
         newUserPw,
       });
