@@ -4,7 +4,7 @@ import { pwChangeUpdateApi } from "../../../api/passwordChangeApi";
 import { pwChangeObject } from "../../../utills/message";
 import ico_close from "../../../images/ico_close.png";
 import { useRecoilValue } from "recoil";
-import { userId } from "../../../utills/state";
+import { userId } from "../../../recoil/state";
 
 const ChangePasswordModal = (props) => {
   const [passwordData, setPasswordData] = useState({
@@ -40,7 +40,8 @@ const ChangePasswordModal = (props) => {
         newUserPw,
       });
       console.log("PwChange Response", res);
-      if (res.code === 200) {
+
+      if (res) {
         alert(pwChangeSuccess);
         setIsProfileUpdateModal(false);
       } else {

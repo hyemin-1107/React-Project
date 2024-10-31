@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
-import { authToken, userId } from "../../utills/state";
+import { authToken, userId } from "../../recoil/state";
 import { createNewBoardApi } from "../../api/createBoardApi";
 import { createBoardObject } from "../../utills/message";
 import HeaderContents from "../../components/HeaderContents";

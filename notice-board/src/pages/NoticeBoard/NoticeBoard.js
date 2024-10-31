@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
-import { authToken } from "../../utills/state";
+import { authToken } from "../../recoil/state";
 
 import styled from "styled-components";
 import { fetchBoardListApi } from "../../api/boardListApi";

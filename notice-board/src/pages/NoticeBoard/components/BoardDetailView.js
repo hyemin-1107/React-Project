@@ -12,7 +12,7 @@ import ico_close from "../../../images/ico_close.png";
 import CommentList from "./CommentList";
 import { commentObject } from "../../../utills/message";
 import { useRecoilValue } from "recoil";
-import { authToken, userId } from "../../../utills/state";
+import { authToken, userId } from "../../../recoil/state";
 
 const BoardDetailView = (props) => {
   const [comments, setComments] = useState([]);

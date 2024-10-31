@@ -6,7 +6,7 @@ import { signInApi } from "../../../api/signInApi";
 import { signInObject } from "../../../utills/message";
 import { onChangeUserDataHandler } from "../../../utills/onChangeUserData";
 import { useSetRecoilState } from "recoil";
-import { authToken, userId } from "../../../utills/state";
+import { authToken, userId } from "../../../recoil/state";
 
 const SignInModal = (props) => {
   const [userData, setUserData] = useState({

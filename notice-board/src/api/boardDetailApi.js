@@ -50,7 +50,7 @@ export const postCommentApi = async (boardId, comment) => {
     console.log("Response data", response.data);
     console.log("boardId", boardId, "comment", comment);
 
-    if (response.data.result === "success") {
+    if (response.data.code === 200) {
       return response;
     } else {
       console.error("댓글을 추가하는데 실패했습니다");

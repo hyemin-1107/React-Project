@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { useSetRecoilState } from "recoil";
-import { userId } from "../../../utills/state";
+import { userId } from "../../../recoil/state";
 
 const CommentList = (props) => {
   const {

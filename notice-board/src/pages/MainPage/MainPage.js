@@ -7,7 +7,7 @@ import ChangePasswordModal from "./components/ChangePasswordModal";
 import MainContent from "./components/MainContent";
 
 import { useRecoilState } from "recoil";
-import { authToken } from "../../utills/state";
+import { authToken } from "../../recoil/state";
 
 const MainPage = () => {
   const [token, setToken] = useRecoilState(authToken);
