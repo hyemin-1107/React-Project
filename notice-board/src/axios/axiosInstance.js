@@ -23,3 +23,11 @@ axiosInstance.interceptors.request.use(
   },
 );
 export default axiosInstance;
+
+export const requestFailedMessageHandle = (failedMessage, message) => {
+  console.error(`${failedMessage} : ${message}`);
+};
+
+export const errorMessageHandle = (errorName, errorMessage) => {
+  console.error(`${errorName} : ${errorMessage}`);
+};

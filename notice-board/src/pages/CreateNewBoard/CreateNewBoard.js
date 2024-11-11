@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import { authToken, userId } from "../../recoil/state";
-import { createNewBoardApi } from "../../api/createBoardApi";
 import { createBoardObject } from "../../utills/message";
 import HeaderContents from "../../components/HeaderContents";
 import CreateBoardForm from "./components/CreateBoardForm";
+import { createNewBoardApi } from "../../api/createNewBoardApi";
 
-const CreateBoard = () => {
-  const dischargeAuthToken = useRecoilValue(authToken);
-  const dischargeUserId = useRecoilValue(userId);
+const CreateNewBoard = () => {
+  const setDischargeAuthToken = useRecoilValue(authToken);
+  const setDischargeUserId = useRecoilValue(userId);
 
   const [userInput, setUserInput] = useState({
     userId: "",
@@ -53,47 +53,39 @@ const CreateBoard = () => {
     navigate("/notice-board");
   };
 
-  const {
-    createBoardSuccess,
-    createBoardError,
-    createBoardFillInValues,
-    createBoardCatchError,
-  } = createBoardObject;
+  const { createBoardSuccess } = createBoardObject;
 
-  const onClickInputCompleteButton = async () => {
-    try {
-      const { boardTitle, boardDetail, imageSrc } = userInput;
-      if (boardTitle !== "" && boardDetail !== "" && imageSrc.src !== "") {
-        const response = await createNewBoardApi(userInput);
-        if (response) {
-          alert(createBoardSuccess);
-          navigate("/notice-board");
-        } else {
-          alert(createBoardError);
-        }
-      } else {
-        alert(createBoardFillInValues);
-      }
-    } catch (error) {
-      alert(createBoardCatchError);
+  const onClickInputCompleteButton = () => {
+    createBoardHandle();
+  };
+
+  const createBoardHandle = async () => {
+    const successHandle = () => {
+      alert(createBoardSuccess);
+      navigate("/notice-board");
+    };
+
+    const { boardTitle, boardDetail, imageSrc } = userInput;
+    if (boardTitle && boardDetail && imageSrc.src) {
+      await createNewBoardApi(userInput, successHandle);
     }
   };
 
   const checkAuthentication = () => {
-    if (!dischargeAuthToken) {
+    if (!setDischargeAuthToken) {
       navigate("/");
       alert("로그인 후 이용해주세요");
     } else {
       setUserInput((prevState) => ({
         ...prevState,
-        userId: dischargeUserId, // Recoil에서 가져온 userId 설정
+        userId: setDischargeUserId, // Recoil에서 가져온 userId 설정
       }));
     }
   };
 
   useEffect(() => {
     checkAuthentication();
-  }, [dischargeAuthToken, navigate, userId]);
+  }, [setDischargeAuthToken, navigate, userId]);
 
   return (
     <>
@@ -109,4 +101,4 @@ const CreateBoard = () => {
   );
 };
 
-export default CreateBoard;
+export default CreateNewBoard;

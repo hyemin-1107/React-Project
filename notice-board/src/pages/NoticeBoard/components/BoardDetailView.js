@@ -6,8 +6,8 @@ import {
   postCommentApi,
   updateCommentApi,
   deleteCommentApi,
-} from "../../../api/boardDetailApi";
-import { deleteBoardApi } from "../../../api/boardListApi";
+  deleteBoardApi,
+} from "../../../api/noticeBoardApi";
 import ico_close from "../../../images/ico_close.png";
 import CommentList from "./CommentList";
 import { commentObject } from "../../../utills/message";
@@ -27,8 +27,8 @@ const BoardDetailView = (props) => {
     fetchAllBoardList,
   } = props;
 
-  const dischargeAuthToken = useRecoilValue(authToken);
-  const dischargeUserId = useRecoilValue(userId);
+  const setDischargeAuthToken = useRecoilValue(authToken);
+  const setDischargeUserId = useRecoilValue(userId);
 
   const updateCommentCallBackFunction = () => {
     if (isBoardDetailModal && selectedBoard) {
@@ -52,7 +52,7 @@ const BoardDetailView = (props) => {
     try {
       const updatedComments = await fetchCommentsApi(
         boardId,
-        dischargeAuthToken,
+        setDischargeAuthToken,
       );
       setComments(updatedComments);
       console.log("Updated Comments", updatedComments);
@@ -95,7 +95,7 @@ const BoardDetailView = (props) => {
       const response = await postCommentApi(
         selectedBoard.boardId,
         inputComment,
-        dischargeAuthToken,
+        setDischargeAuthToken,
       );
       if (response) {
         await updateCommentsList(selectedBoard.boardId); // 댓글 목록 갱신
@@ -113,7 +113,7 @@ const BoardDetailView = (props) => {
   const handleDeleteBoard = async () => {
     if (window.confirm("게시글을 삭제하시겠습니까?")) {
       try {
-        await deleteBoardApi(selectedBoard.boardId, dischargeAuthToken);
+        await deleteBoardApi(selectedBoard.boardId, setDischargeAuthToken);
         alert("게시글이 삭제되었습니다.");
         onClickCloseButton();
         fetchAllBoardList();
@@ -142,7 +142,7 @@ const BoardDetailView = (props) => {
           <CloseButton src={ico_close} alt="" onClick={onClickCloseButton} />
           <BoardDetailViewUserDate>
             <div>{selectedBoard.userId}</div>
-            {selectedBoard.userId === dischargeUserId && (
+            {selectedBoard.userId === setDischargeUserId && (
               <DeleteButton
                 onClick={() => handleDeleteBoard(fetchAllBoardList)}
               >

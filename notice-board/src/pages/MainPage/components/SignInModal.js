@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import ico_close from "../../../images/ico_close.png";
-import { signInApi } from "../../../api/signInApi";
+import { signInApi } from "../../../api/mainPageApi";
 import { signInObject } from "../../../utills/message";
 import { onChangeUserDataHandler } from "../../../utills/onChangeUserData";
 import { useSetRecoilState } from "recoil";
@@ -14,22 +14,15 @@ const SignInModal = (props) => {
     userPw: "",
   });
 
-  const dischargeAuthToken = useSetRecoilState(authToken);
-  const dischargeUserId = useSetRecoilState(userId);
+  const setDischargeAuthToken = useSetRecoilState(authToken);
+  const setDischargeUserId = useSetRecoilState(userId);
 
   const { isSignInModal, setIsSignInModal, openSignUpModal, setIsLoggedIn } =
     props;
 
   const navigate = useNavigate();
 
-  const {
-    signInCatchError,
-    notUserDataInput,
-    signInSuccess,
-    signInCode401,
-    signInCode500,
-    signInError,
-  } = signInObject;
+  const { notUserDataInput, signInSuccess } = signInObject;
 
   const onSubmitSignInButton = async (e) => {
     e.preventDefault();
@@ -38,32 +31,19 @@ const SignInModal = (props) => {
       alert(notUserDataInput);
       return;
     }
-    try {
-      const res = await signInApi(userData);
 
-      if (res) {
-        if (res.code === 200) {
-          console.log("로그인정보", res);
-          alert(signInSuccess);
+    await signInSuccessHandle(userData);
+  };
 
-          const token = res.data;
-          dischargeAuthToken(token); // API에서 받은 토큰을 설정
+  const signInSuccessHandle = async (token) => {
+    await signInApi(userData);
+    console.log("로그인 정보", userData);
+    alert(signInSuccess);
 
-          dischargeUserId(userData.userId); // 사용자의 ID를 설정
-
-          setIsLoggedIn(true);
-          navigate("/notice-board");
-        } else if (res.code === 401) {
-          alert(signInCode401);
-        } else if (res.code === 500) {
-          alert(signInCode500);
-        }
-      } else {
-        alert(signInError);
-      }
-    } catch (error) {
-      alert(signInCatchError);
-    }
+    setDischargeAuthToken(token);
+    setDischargeUserId(userData.userId);
+    setIsLoggedIn(true);
+    navigate("/notice-board");
   };
 
   return (

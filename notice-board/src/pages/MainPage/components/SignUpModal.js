@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import ico_close from "../../../images/ico_close.png";
-import { signUpApi } from "../../../api/signUpApi";
+import { signUpApi } from "../../../api/mainPageApi";
 import { signUpObject } from "../../../utills/message";
 import { onChangeUserDataHandler } from "../../../utills/onChangeUserData";
 

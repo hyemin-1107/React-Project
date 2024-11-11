@@ -15,7 +15,7 @@ const CommentList = (props) => {
     setEditingContent,
   } = props;
 
-  const dischargeUserId = useSetRecoilState(userId);
+  const setDischargeUserId = useSetRecoilState(userId);
 
   return (
     <CommentListContainer>
@@ -38,7 +38,7 @@ const CommentList = (props) => {
               </CommentDate>
               <Comment>{data.comment}</Comment>
 
-              {data.userId === dischargeUserId && (
+              {data.userId === setDischargeUserId && (
                 <>
                   <button
                     onClick={() =>

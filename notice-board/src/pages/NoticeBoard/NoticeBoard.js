@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useRecoilValue } from "recoil";
-import { authToken } from "../../recoil/state";
+// import { useRecoilValue } from "recoil";
+// import { authToken } from "../../recoil/state";
 
 import styled from "styled-components";
-import { fetchBoardListApi } from "../../api/boardListApi";
+import { fetchBoardListApi } from "../../api/noticeBoardApi";
 import {
   fetchBoardDetailApi,
   fetchCommentsApi,
-} from "../../api/boardDetailApi";
+} from "../../api/noticeBoardApi";
 import { noticeBoardObject } from "../../utills/message";
 import HeaderContents from "../../components/HeaderContents";
 import BoardDetailView from "./components/BoardDetailView";

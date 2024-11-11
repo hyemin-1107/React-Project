@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { pwChangeUpdateApi } from "../../../api/passwordChangeApi";
 import { pwChangeObject } from "../../../utills/message";
 import ico_close from "../../../images/ico_close.png";
 import { useRecoilValue } from "recoil";
 import { userId } from "../../../recoil/state";
+import { pwChangeUpdateApi } from "../../../api/mainPageApi";
 
 const ChangePasswordModal = (props) => {
   const [passwordData, setPasswordData] = useState({
@@ -13,7 +13,7 @@ const ChangePasswordModal = (props) => {
     confirmUserPw: "",
   });
   const { isProfileUpdateModal, setIsProfileUpdateModal } = props;
-  const dischargeUserId = useRecoilValue(userId);
+  const setDischargeUserId = useRecoilValue(userId);
 
   const onChangePasswordInput = (e) => {
     const { name, value } = e.target;
@@ -23,34 +23,36 @@ const ChangePasswordModal = (props) => {
     });
   };
 
-  const { pwChangeSuccess, pwChangeError, pwChangeCatchError } = pwChangeObject;
+  const { pwChangeSuccess } = pwChangeObject;
 
   const onClickPasswordChange = async () => {
     const { userPw, newUserPw, confirmUserPw } = passwordData;
 
+    passwordChangeValidationHandle(newUserPw, confirmUserPw);
+
+    await passwordChangeHandle(userPw, newUserPw);
+  };
+
+  const passwordChangeValidationHandle = (newUserPw, confirmUserPw) => {
     if (newUserPw !== confirmUserPw) {
       alert("새 비밀번호가 일치하지 않습니다.");
       return;
     }
+  };
 
-    try {
-      const res = await pwChangeUpdateApi({
-        dischargeUserId,
-        userPw,
-        newUserPw,
-      });
-      console.log("PwChange Response", res);
+  const passwordChangeHandle = async (userPw, newUserPw) => {
+    const passwordChangeData = {
+      setDischargeUserId,
+      userPw,
+      newUserPw,
+    };
 
-      if (res) {
-        alert(pwChangeSuccess);
-        setIsProfileUpdateModal(false);
-      } else {
-        alert(pwChangeError);
-      }
-    } catch (error) {
-      alert(pwChangeCatchError);
-      console.log(error.message);
-    }
+    const successHandle = (responseData) => {
+      console.log(responseData);
+      alert(pwChangeSuccess);
+    };
+
+    await pwChangeUpdateApi(passwordChangeData, successHandle);
   };
 
   return (
