@@ -8,8 +8,8 @@ import CreateBoardForm from "./components/CreateBoardForm";
 import { createNewBoardApi } from "../../api/createNewBoardApi";
 
 const CreateNewBoard = () => {
-  const setDischargeAuthToken = useRecoilValue(authToken);
-  const setDischargeUserId = useRecoilValue(userId);
+  const dischargeAuthToken = useRecoilValue(authToken);
+  const dischargeUserId = useRecoilValue(userId);
 
   const [userInput, setUserInput] = useState({
     userId: "",
@@ -72,20 +72,20 @@ const CreateNewBoard = () => {
   };
 
   const checkAuthentication = () => {
-    if (!setDischargeAuthToken) {
+    if (!dischargeAuthToken) {
       navigate("/");
       alert("로그인 후 이용해주세요");
     } else {
       setUserInput((prevState) => ({
         ...prevState,
-        userId: setDischargeUserId, // Recoil에서 가져온 userId 설정
+        userId: dischargeUserId, // Recoil에서 가져온 userId 설정
       }));
     }
   };
 
   useEffect(() => {
     checkAuthentication();
-  }, [setDischargeAuthToken, navigate, userId]);
+  }, [dischargeAuthToken, navigate, userId]);
 
   return (
     <>

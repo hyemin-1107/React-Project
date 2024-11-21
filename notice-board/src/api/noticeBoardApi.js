@@ -1,17 +1,23 @@
-import axiosInstance from "../axios/axiosInstance";
+import axiosInstance, {
+  errorMessageHandle,
+  requestFailedMessageHandle,
+} from "../axios/axiosInstance";
+import { noticeBoardObject } from "../utills/message";
 
 // 게시물 상세 정보 가져오기
 export const fetchBoardDetailApi = async (boardId) => {
+  const { boardDetailError, fetchBoardError } = noticeBoardObject;
   try {
     const response = await axiosInstance.get(`/board/${boardId}`);
     console.log("게시물 상세 정보", response.data);
     if (response.data.code === 200) {
       return response.data.data;
     } else {
-      console.error("게시판 상세 정보를 가져오는데 실패했습니다");
+      requestFailedMessageHandle(boardDetailError);
     }
   } catch (error) {
-    console.error("게시판 상세 정보를 가져오는데 실패했습니다", error);
+    errorMessageHandle(fetchBoardError, error);
+    alert(boardDetailError);
   }
 };
 
@@ -91,6 +97,7 @@ export const deleteCommentApi = async (commentId) => {
 };
 
 export const fetchBoardListApi = async (offset, limit, authToken) => {
+  const { fetchBoardError } = noticeBoardObject;
   try {
     const response = await axiosInstance.get(`/board/list`, {
       params: {
@@ -104,7 +111,6 @@ export const fetchBoardListApi = async (offset, limit, authToken) => {
 
     if (response.data.code === 200) {
       console.log("API", response.data);
-
       return {
         boardList: response.data.data,
         totalCount: response.data.totalCount,
@@ -114,6 +120,7 @@ export const fetchBoardListApi = async (offset, limit, authToken) => {
     }
   } catch (error) {
     console.error("게시판 목록을 불러오는데 실패했습니다:", error.message);
+    alert(fetchBoardError);
   }
 };
 

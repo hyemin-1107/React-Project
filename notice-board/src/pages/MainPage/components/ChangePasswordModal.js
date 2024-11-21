@@ -13,7 +13,7 @@ const ChangePasswordModal = (props) => {
     confirmUserPw: "",
   });
   const { isProfileUpdateModal, setIsProfileUpdateModal } = props;
-  const setDischargeUserId = useRecoilValue(userId);
+  const dischargeUserId = useRecoilValue(userId);
 
   const onChangePasswordInput = (e) => {
     const { name, value } = e.target;
@@ -25,9 +25,8 @@ const ChangePasswordModal = (props) => {
 
   const { pwChangeSuccess } = pwChangeObject;
 
+  const { userPw, newUserPw, confirmUserPw } = passwordData;
   const onClickPasswordChange = async () => {
-    const { userPw, newUserPw, confirmUserPw } = passwordData;
-
     passwordChangeValidationHandle(newUserPw, confirmUserPw);
 
     await passwordChangeHandle(userPw, newUserPw);
@@ -42,7 +41,7 @@ const ChangePasswordModal = (props) => {
 
   const passwordChangeHandle = async (userPw, newUserPw) => {
     const passwordChangeData = {
-      setDischargeUserId,
+      dischargeUserId,
       userPw,
       newUserPw,
     };

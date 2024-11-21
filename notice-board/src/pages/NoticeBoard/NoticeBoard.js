@@ -43,22 +43,32 @@ const NoticeBoard = () => {
     return date;
   };
 
-  const { fetchBoardError, boardDetailError } = noticeBoardObject;
+  const { boardDetailError } = noticeBoardObject;
 
-  const fetchAllBoardList = async () => {
-    try {
-      console.log("Current page", page);
-      console.log("Offset", offset, "Limit", limit);
-      const response = await fetchBoardListApi(offset, limit);
-      if (response) {
-        console.log("Board List Response", response.boardList);
-        setBoardList(response.boardList);
-        setTotalItemsCount(response.totalCount);
-      }
-    } catch (error) {
-      console.error("게시판 리스트를 가져오는데 실패했습니다:", error.message);
-      alert(fetchBoardError);
-    }
+  const fetchAllBoardList = () => {
+    getFetchAllBoardListHandle();
+    // try {
+    //   console.log("Current page", page);
+    //   console.log("Offset", offset, "Limit", limit);
+    //   const response = await fetchBoardListApi(offset, limit);
+    //   if (response) {
+    //     console.log("Board List Response", response.boardList);
+    //     setBoardList(response.boardList);
+    //     setTotalItemsCount(response.totalCount);
+    //   }
+    // } catch (error) {
+    //   console.error("게시판 리스트를 가져오는데 실패했습니다:", error.message);
+    //   alert(fetchBoardError);
+    // }
+  };
+
+  const getFetchAllBoardListHandle = async () => {
+    console.log("Current page", page);
+    console.log("Offset", offset, "Limit", limit);
+    const response = await fetchBoardListApi(offset, limit);
+    console.log("Board List Response", response.boardList);
+    setBoardList(response.boardList);
+    setTotalItemsCount(response.totalCount);
   };
 
   const openBoardDetailModal = async (boardId) => {
@@ -72,6 +82,17 @@ const NoticeBoard = () => {
       alert(boardDetailError);
     }
   };
+
+  // const openBoardDetailModal = () => {
+  //   openBoardDetailModalHandle();
+  // };
+
+  // const openBoardDetailModalHandle = async (boardId) => {
+  //   const boardDetail = await fetchBoardDetailApi(boardId);
+  //   setSelectedBoard(boardDetail);
+  //   setIsBoardDetailModal(true);
+  //   fetchComments(boardId);
+  // };
 
   const closeBoardDetailModal = () => {
     setIsBoardDetailModal(false);

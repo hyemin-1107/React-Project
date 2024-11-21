@@ -2,14 +2,16 @@ import axiosInstance, {
   errorMessageHandle,
   requestFailedMessageHandle,
 } from "../axios/axiosInstance";
-import { pwChangeObject, signInObject } from "../utills/message";
+import { pwChangeObject, signInObject, signUpObject } from "../utills/message";
 
 export const signUpApi = async (userData) => {
+  const { signUpCatchError } = signUpObject;
   try {
     const res = await axiosInstance.post("/user/signup", userData);
     return res.data;
   } catch (error) {
-    console.error("가입에 실패했습니다.", error);
+    errorMessageHandle("가입에 실패했습니다.", error);
+    alert(signUpCatchError);
   }
 };
 
@@ -21,9 +23,9 @@ export const signInApi = async (userData, signInSuccessHandle) => {
 
     if (res.code === 200) {
       signInSuccessHandle(res.data);
-    } else if (res.data.code === 401) {
+    } else if (res.code === 401) {
       alert(signInCode401);
-    } else if (res.data.code === 500) {
+    } else if (res.code === 500) {
       alert(signInCode500);
     }
   } catch (error) {
